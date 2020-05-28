@@ -307,11 +307,11 @@ public class HexOS : MonoBehaviour
         byte[] seq2 = new byte[19] { 0, 0, 0, 0, 0,
                                      1, 1, 1, 1, 1,
                                      2, 2, 2, 2, 2,
-                                     _ciphers[_press % 2 * 3], _ciphers[_press % 2 * 3], _ciphers[_press % 2 * 3], _ciphers[_press % 2 * 3] };
+                                     _ciphers[(_press % 2 * 3) + 1], _ciphers[(_press % 2 * 3) + 1], _ciphers[(_press % 2 * 3) + 1], _ciphers[(_press % 2 * 3) + 1] };
         byte[] seq3 = new byte[19] { 0, 0, 0, 0, 0,
                                      1, 1, 1, 1, 1,
                                      2, 2, 2, 2, 2,
-                                     _ciphers[_press % 2 * 3], _ciphers[_press % 2 * 3], _ciphers[_press % 2 * 3], _ciphers[_press % 2 * 3] };
+                                     _ciphers[(_press % 2 * 3) + 2], _ciphers[(_press % 2 * 3) + 2], _ciphers[(_press % 2 * 3) + 2], _ciphers[(_press % 2 * 3) + 2] };
 
         //allow for easy access to all three via indexes
         byte[][] seq = new byte[3][] { seq1, seq2, seq3 };
