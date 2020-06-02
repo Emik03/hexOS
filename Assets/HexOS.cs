@@ -345,7 +345,7 @@ public class HexOS : MonoBehaviour
 
             //60 / 1140 (190bpm * 6beat)
             //yield return new WaitForSeconds(0.0526315789474f);
-            yield return new WaitForSeconds(0.06f);
+            yield return new WaitForSeconds(0.07f);
         }
 
         //turn back to black
@@ -354,7 +354,7 @@ public class HexOS : MonoBehaviour
 
         //(60 / 1140) * 12 (190bpm * 6beat * 12beat)
         //yield return new WaitForSeconds(0.63157894736f);
-        yield return new WaitForSeconds(0.72f);
+        yield return new WaitForSeconds(0.84f);
 
         if (Status.text != "Boot Manager\nStoring " + _submit + "...")
             Status.text = "Boot Manager\nWaiting...";
