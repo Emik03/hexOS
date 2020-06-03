@@ -745,26 +745,27 @@ public class HexOS : MonoBehaviour
                 while (buttonPress[1].Length < 3)
                     buttonPress[1] = "0" + buttonPress[1];
 
+                //will quickly determine if the module is about to solve or strike
+                if (buttonPress[1] == _answer)
+                    yield return "solve";
+
+                else
+                    yield return "strike";
+
                 //cycle through each digit
-                byte index = 0;
-                while (index < buttonPress[1].Length)
+                for (byte i = 0; i < buttonPress[1].Length; i++)
                 {
-                    //if digit submitted is same as module
-                    if (buttonPress[1][index] == Number.text[index])
-                    {
-                        //hold button
-                        index++;
-                        Button.OnInteract();
+                    //wait until the correct number is shown
+                    yield return new WaitWhile(() => buttonPress[1][i] != Number.text[i]);
 
-                        //wait until module can submit
-                        while (_held < 20)
-                            yield return new WaitForSeconds(0.1f);
+                    //hold button
+                    Button.OnInteract();
 
-                        //release button
-                        Button.OnInteractEnded();
-                    }
+                    //wait until module can submit
+                    yield return new WaitWhile(() => _held < 20);
 
-                    yield return new WaitForSeconds(0.1f);
+                    //release button
+                    Button.OnInteractEnded();
                 }
             }
         }
@@ -783,25 +784,19 @@ public class HexOS : MonoBehaviour
         Debug.LogFormat("[hexOS #{0}]: Admin has initiated autosolver. The module will now submit {1}.", _moduleId, solve);
 
         //cycle through each digit
-        byte index = 0;
-        while (index < solve.Length)
+        for (byte i = 0; i < solve.Length; i++)
         {
-            //if answer digit is same as module digit
-            if (solve[index] == Number.text[index])
-            {
-                //hold button
-                index++;
-                Button.OnInteract();
+            //wait until the correct number is shown
+            yield return new WaitWhile(() => solve[i] != Number.text[i]);
 
-                //wait until module can submit
-                while (_held < 20)
-                    yield return new WaitForSeconds(0.1f);
+            //hold button
+            Button.OnInteract();
 
-                //release button
-                Button.OnInteractEnded();
-            }
+            //wait until module can submit
+            yield return new WaitWhile(() => _held < 20);
 
-            yield return new WaitForSeconds(0.1f);
+            //release button
+            Button.OnInteractEnded();
         }
     }
 }
