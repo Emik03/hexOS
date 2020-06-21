@@ -550,9 +550,10 @@ public class HexOS : MonoBehaviour
         for (byte i = 0; i < logicOutput.Length; i++)
             offset += logicOutput[i];
 
+        //calculates the digital root
         string newScreen = "";
         for (byte i = 0; i < screen.Length; i++)
-            newScreen += DigitalRoot((byte)(byte.Parse(screen[i].ToString()) + Math.Abs(offset)));
+            newScreen += ((byte.Parse(screen[i].ToString()) + Math.Abs(offset) - 1) % 9) + 1;
 
         Debug.LogFormat("[hexOS #{0}]: The output from each logic computation is {1}", _moduleId, logicOutput.Join(", "));
         Debug.LogFormat("[hexOS #{0}]: Combining all of them gives the offset {1}.", _moduleId, offset);
@@ -592,9 +593,9 @@ public class HexOS : MonoBehaviour
 
         if (leftover.Length != 0)
         {
-            //add leftovers to sequence
+            //add leftovers to sequence with digital root
             for (byte i = 0; i < (Math.Floor(seq.Length / 6f) * 6); i++)
-                newSeq += DigitalRoot((byte)(byte.Parse(seq[i].ToString()) + byte.Parse(leftover[i % leftover.Length].ToString()))).ToString();
+                newSeq += ((((byte)(byte.Parse(seq[i].ToString()) + byte.Parse(leftover[i % leftover.Length].ToString()))) - 1) % 9) + 1;
 
             Debug.LogFormat("[hexOS #{0}]: Leftovers > {1}", _moduleId, leftover);
             Debug.LogFormat("[hexOS #{0}]: Modified sequence > {1}", _moduleId, newSeq);
@@ -614,27 +615,6 @@ public class HexOS : MonoBehaviour
         }
 
         return newSeq;
-    }
-
-    /// <summary>
-    /// Calculates and returns the digital root of the number provided.
-    /// </summary>
-    /// <param name="num">The number that will be used to calculate the digital root of itself.</param>
-    private byte DigitalRoot(byte num)
-    {
-        byte result = 0;
-
-        //repeat until 1-digit number
-        while (num > 9)
-        {
-            //take each number seperately and add them together
-            foreach (char c in num.ToString())
-                result += (byte)char.GetNumericValue(c);
-
-            num = result;
-        }
-
-        return num;
     }
 
     /// <summary>
