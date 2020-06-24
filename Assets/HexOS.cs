@@ -1,16 +1,26 @@
-﻿using UnityEngine;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using UnityEngine;
 using Rnd = UnityEngine.Random;
 
 public class HexOS : MonoBehaviour
 {
+    public class ModSettingsJSON
+    {
+        public bool experimentalShake, forceAltSolve;
+        public byte flashOtherColors;
+        public float delayPerBeat;
+        public string customSolveQuote;
+    }
+
     public KMAudio Audio;
     public KMBombInfo Info;
     public KMBombModule Module;
+    public KMModSettings ModSettings;
     public KMSelectable Button;
     public MeshRenderer[] Ciphers, Cylinders;
     public TextMesh Number, UserNumber, Status, Quote;
@@ -20,20 +30,48 @@ public class HexOS : MonoBehaviour
     readonly char[] decipher = new char[2];
     string sum = "", screen = "";
 
+    private static bool _forceAltSolve = false, _experimentalShake;
     private bool _lightsOn = false, _isHolding, _playSequence;
+    private static byte _flashOtherColors = 5;
     private sbyte _press = -1, _held = 0;
     private readonly byte[] _rhythms = new byte[2], _ciphers = new byte[6];
     private static int _moduleIdCounter = 1, _y = 0;
     private int _moduleId = 0;
+    private static float _delayPerBeat = 0.07f, _hexOSStrikes = 0;
+    private static string _customSolveQuote = "";
     private string _user = "", _answer = "", _submit = "";
 
     /// <summary>
-    /// moduleId Initialisation
+    /// ModuleID and JSON Initialisation
     /// </summary>
     private void Start()
     {
+        //give each module of hexOS a different number
         Module.OnActivate += Activate;
         _moduleId = _moduleIdCounter++;
+
+        //get JSON settings
+        try
+        {
+            //get settings
+            ModSettingsJSON settings = JsonConvert.DeserializeObject<ModSettingsJSON>(ModSettings.Settings);
+
+            //if it contains information
+            if (settings != null)
+            {
+                //establish variables
+                _experimentalShake = settings.experimentalShake;
+                _forceAltSolve = settings.forceAltSolve;
+                _flashOtherColors = Math.Min(settings.flashOtherColors, (byte)6);
+                _delayPerBeat = Math.Min(Math.Abs(settings.delayPerBeat), 1);
+                _customSolveQuote = settings.customSolveQuote;
+            }
+        }
+        catch (JsonReaderException e)
+        {
+            //in the case of catastrophic failure and devastation
+            Debug.LogFormat("[hexOS #{0}] JSON reading failed with error: \"{1}\", resorting to default values.", _moduleId, e.Message);
+        }
     }
 
     /// <summary>
@@ -121,7 +159,8 @@ public class HexOS : MonoBehaviour
         //sounds and punch effect
         Audio.PlaySoundAtTransform("click", Module.transform);
         Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Module.transform);
-        Button.AddInteractionPunch();
+        
+        Button.AddInteractionPunch(5);
 
         //lights off, solved then it should end it here
         if (!_lightsOn || isSolved)
@@ -209,6 +248,9 @@ public class HexOS : MonoBehaviour
                     Debug.LogFormat("[hexOS #{0}]: The number submitted ({1}) did not match the expected answer ({2}), that's a strike!", _moduleId, _user, _answer);
                     _user = "";
                     Module.HandleStrike();
+
+                    //caps at 1, 20+ are treated the same as exactly 20 strikes
+                    _hexOSStrikes = Math.Min(++_hexOSStrikes, 20);
                 }
             }
 
@@ -231,8 +273,10 @@ public class HexOS : MonoBehaviour
         Debug.LogFormat("[hexOS #{0}]: The correct number was submitted, module solved!", _moduleId);
         Module.HandlePass();
 
-        //if forget the colors OR directional button exists, pick a meme message
-        if (Info.GetSolvableModuleNames().Contains("Forget The Colors") || Info.GetSolvableModuleNames().Contains("Directional Button"))
+        Button.AddInteractionPunch(10);
+
+        //if forget the colors exists, or it's forced to, pick a meme message
+        if (_forceAltSolve || Info.GetSolvableModuleNames().Contains("Forget The Colors"))
         {
             Audio.PlaySoundAtTransform("solveAlt", Module.transform);
             Quote.text = _solveAlt[Rnd.Range(0, _solveAlt.Length)];
@@ -245,7 +289,11 @@ public class HexOS : MonoBehaviour
             Quote.text = _solve[Rnd.Range(0, _solve.Length)];
         }
 
-        //plays every sound
+        //if custom quote has been filled, render it
+        if (_customSolveQuote != "")
+            Quote.text = _customSolveQuote;
+
+        //shuffles through a bunch of random numbers
         for (byte i = 0; i < _solveChords.Length; i++)
         {
             Number.text = Rnd.Range(100, 1000).ToString();
@@ -287,7 +335,7 @@ public class HexOS : MonoBehaviour
                 Number.text = screen[index++].ToString() + screen[index++].ToString() + screen[index++].ToString();
 
             //display lag
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(1f + (_hexOSStrikes / 20));
         }
     }
 
@@ -299,22 +347,29 @@ public class HexOS : MonoBehaviour
         //prevent button presses from playing the sequence when it's already being played
         _playSequence = true;
 
-        //establish colors to be displayed for each tile, 0 = black, 1 = white, 2 = magenta
-        byte[] seq1 = new byte[19] { 0, 0, 0, 0, 0,
-                                     1, 1, 1, 1, 1,
-                                     2, 2, 2, 2, 2,
-                                     _ciphers[_press % 2 * 3], _ciphers[_press % 2 * 3], _ciphers[_press % 2 * 3], _ciphers[_press % 2 * 3] };
-        byte[] seq2 = new byte[19] { 0, 0, 0, 0, 0,
-                                     1, 1, 1, 1, 1,
-                                     2, 2, 2, 2, 2,
-                                     _ciphers[(_press % 2 * 3) + 1], _ciphers[(_press % 2 * 3) + 1], _ciphers[(_press % 2 * 3) + 1], _ciphers[(_press % 2 * 3) + 1] };
-        byte[] seq3 = new byte[19] { 0, 0, 0, 0, 0,
-                                     1, 1, 1, 1, 1,
-                                     2, 2, 2, 2, 2,
-                                     _ciphers[(_press % 2 * 3) + 2], _ciphers[(_press % 2 * 3) + 2], _ciphers[(_press % 2 * 3) + 2], _ciphers[(_press % 2 * 3) + 2] };
+        byte[] seq1 = new byte[19];
+        byte[] seq2 = new byte[19];
+        byte[] seq3 = new byte[19];
 
         //allow for easy access to all three via indexes
-        byte[][] seq = new byte[3][] { seq1, seq2, seq3 };
+        byte[][] seqs = new byte[3][] { seq1, seq2, seq3 };
+
+        //establish colors to be displayed for each tile, 0 = black, 1 = white, 2 = magenta
+        for (byte i = 0; i < _flashOtherColors - _hexOSStrikes; i++)
+            //for each color
+            for (byte j = 0; j < 3; j++)
+                //for each sequence variable
+                for (byte k = 0; k < seqs.Length; k++)
+                    seqs[k][(i * 3) + j] = j;
+
+        //fill in remaining slots
+        for (byte i = (byte)(3 * (_flashOtherColors - _hexOSStrikes)); i < seq1.Length; i++)
+            //for each sequence variable
+            for (int j = 0; j < seqs.Length; j++)
+                seqs[j][i] = _ciphers[(_press % 2 * 3) + j];
+
+        //foreach (var seq in seqs)
+        //    Debug.Log(seq.Join(", "));
 
         //shuffle it for ambiguity
         seq1.Shuffle();
@@ -326,18 +381,29 @@ public class HexOS : MonoBehaviour
 
         for (byte i = 0; i < _notes[_press].Length; i++)
         {
+            //at least 2 strikes, start playing hi-hat
+            if (_delayPerBeat + (_hexOSStrikes / 20) > 0.2f)
+                Audio.PlaySoundAtTransform("hihat", Module.transform);
+
             //look through the sequence of rhythms, if a note should be playing, play note
             if (_notes[_rhythms[_press % 2]][i] == 'X')
+            {
                 Audio.PlaySoundAtTransform("chord" + (_press + 1), Module.transform);
+                if (_experimentalShake)
+                    Button.AddInteractionPunch();
+            }
 
             //render color, but only half as often as the rhythms
             for (byte j = 0; j < Ciphers.Length; j++)
-                Ciphers[j].material.color = _color32s[seq[j][i / 2]];
+                Ciphers[j].material.color = _color32s[seqs[j][i / 2]];
 
             //if it's the last index, emphasise it with percussion
             if (i == _notes[_press].Length - 1)
             {
                 Audio.PlaySoundAtTransform("clap", Module.transform);
+
+                if (_experimentalShake)
+                    Button.AddInteractionPunch(20);
 
                 if (Status.text != "Boot Manager\nStoring " + _submit + "...")
                     Status.text = "Boot Manager\nLoading...";
@@ -345,7 +411,7 @@ public class HexOS : MonoBehaviour
 
             //60 / 1140 (190bpm * 6beat)
             //yield return new WaitForSeconds(0.0526315789474f);
-            yield return new WaitForSeconds(0.07f);
+            yield return new WaitForSeconds(Math.Min(_delayPerBeat + (_hexOSStrikes / 20), 1));
         }
 
         //turn back to black
@@ -354,7 +420,7 @@ public class HexOS : MonoBehaviour
 
         //(60 / 1140) * 12 (190bpm * 6beat * 12beat)
         //yield return new WaitForSeconds(0.63157894736f);
-        yield return new WaitForSeconds(0.84f);
+        yield return new WaitForSeconds(Math.Min((_delayPerBeat * 12) + (_hexOSStrikes / 20), 1));
 
         if (Status.text != "Boot Manager\nStoring " + _submit + "...")
             Status.text = "Boot Manager\nWaiting...";

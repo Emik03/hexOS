@@ -1,0 +1,16 @@
+{
+	"experimentalShake": false,
+	"HowToUse0": "Have the module shake upon every played beat, don't use this on serious bombs. :) (default: false)",
+	
+	"forceAltSolve": false,
+	"HowToUse1": "Force the module to play the alternative solve sequence regardless of Forget The Colors' existence. (default: false)",
+	
+	"flashOtherColors": 5,
+	"HowToUse2": "Alter the amount of times other colors flash. Cannot exceed 6. (default: 5)",
+	
+	"delayPerBeat": 0.07,
+	"HowToUse3": "Alter the delay between each beat played. Cannot exceed 1. (default: 0.07)",
+	
+	"customSolveQuote": "",
+	"HowToUse4": "Change the display on the module when it is solved. If left blank, it will pull its default quotes. (default: literally nothing)"
+}
