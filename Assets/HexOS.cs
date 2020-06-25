@@ -30,15 +30,15 @@ public class HexOS : MonoBehaviour
     readonly char[] decipher = new char[2];
     string sum = "", screen = "";
 
-    private static bool _forceAltSolve = false, _experimentalShake;
+    private static bool _forceAltSolve, _experimentalShake;
     private bool _lightsOn = false, _isHolding, _playSequence;
     private static byte _flashOtherColors = 5;
     private sbyte _press = -1, _held = 0;
     private readonly byte[] _rhythms = new byte[2], _ciphers = new byte[6];
     private static int _moduleIdCounter = 1, _y = 0;
     private int _moduleId = 0;
-    private static float _delayPerBeat = 0.07f, _hexOSStrikes = 0;
-    private static string _customSolveQuote = "";
+    private static float _delayPerBeat, _hexOSStrikes;
+    private static string _customSolveQuote;
     private string _user = "", _answer = "", _submit = "";
 
     /// <summary>
@@ -49,6 +49,14 @@ public class HexOS : MonoBehaviour
         //give each module of hexOS a different number
         Module.OnActivate += Activate;
         _moduleId = _moduleIdCounter++;
+
+        //set the variables in case if they don't get set by ModSettings
+        _experimentalShake = false;
+        _forceAltSolve = false;
+        _flashOtherColors = 5;
+        _delayPerBeat = 0.07f;
+        _customSolveQuote = "";
+        _hexOSStrikes = 0;
 
         //get JSON settings
         try
@@ -363,13 +371,13 @@ public class HexOS : MonoBehaviour
                     seqs[k][(i * 3) + j] = j;
 
         //fill in remaining slots
-        for (byte i = (byte)(3 * (_flashOtherColors - _hexOSStrikes)); i < seq1.Length; i++)
+        for (byte i = (byte)Math.Max(3 * (_flashOtherColors - _hexOSStrikes), 0); i < seq1.Length; i++)
             //for each sequence variable
             for (int j = 0; j < seqs.Length; j++)
                 seqs[j][i] = _ciphers[(_press % 2 * 3) + j];
 
         //foreach (var seq in seqs)
-        //    Debug.Log(seq.Join(", "));
+            //Debug.Log(seq.Join(", "));
 
         //shuffle it for ambiguity
         seq1.Shuffle();
