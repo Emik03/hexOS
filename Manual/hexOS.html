@@ -11,6 +11,30 @@
     <script src="js/ktane-utils.js"></script>
 </head>
 <style>
+	.page-bg-04 {
+        background-image: url("img/hexOS/page-bg-noise-04.png");
+	}	
+	
+	.page-bg-05 {
+        background-image: url("img/hexOS/page-bg-noise-05.png");
+	}	
+	
+	.page-bg-06 {
+        background-image: url("img/hexOS/page-bg-noise-06.png");
+	}
+	
+	.page-bg-07 {
+        background-image: url("img/hexOS/page-bg-noise-07.png");
+	}
+		
+	.border {
+		border: 3px solid black;
+	}
+	
+	.black {
+		background-color: #000000;
+		border: 3px solid black;
+	}
 </style>
 <body>
     <div id="ManualContent">
@@ -28,7 +52,7 @@
                     <p>The module has a computer with the operating system <i>hexOS</i>.</p>
 					
 					<h3>Rhythm Identification (4-bit)</h3>
-					<p>Pressing and immeditely releasing it will alternate between playing 2 different rhythms each time it's played. Find both rhythms where black is a bass kick played and add their values together. Don't carry. (1+1 ≠ 10)</p>
+					<p>Pressing and immeditely releasing it will alternate between playing 2 different rhythms each time it's played. Find both rhythms where black is a chord played and add their values together. Don't carry. (1+1 ≠ 10)</p>
 					<table style="transform: scale(0.85); margin-left: -65px; margin-top: -45px;">
                         <tr>
                             <td style="background-color: #000000;"></td>
@@ -1267,24 +1291,21 @@
 						<ul>
 							<li>Split the sequence in groups of 6. Add the left half of each group with the right half. Link all sums from left to right into one big number.</li>
 							<br>
-							<li>If groups of 6 can no longer be formed: Remove the 1-5 rightmost digits and make a new sequence of itself repeating. Add both sequences' individual digits. If any digit exceeds 9, apply the digital root*.</li>
+							<li>If groups of 6 can no longer be formed: Remove the 1-5 rightmost digits and make a new sequence of itself repeating. Add both sequences' individual digits. If any digit exceed 9, apply the digital root*.</li>
 							<br>
-							<li>If the sequence is 6 digits or longer, repeat <strong>Sequence Modification</strong>.</li>
+							<li>Repeat <strong>Sequence Modification</strong> until it is less than 6 digits long.</li>
 						</ul>
+						<li>Remove the leftmost digits until the sequence is 3 digits long.</li>
 					</ul>
-					<p style="font-style: italic">*Digital root: Adding up all digits individually until one number is formed. Example: 555 = 5+5+5 = 15 = 1+5 = 6.</p>
+					<p style="font-style: italic">*Digital Root: Adding up all digits individually until one number is formed. Example: 555 = 5+5+5 = 15 = 1+5 = 6.</p>
 					
 					<h3>Submitting</h3>
 					<ul>
-						<li>If your final sequence is 4 digits long, subtract 1000.</li>
-						<br>
-						<li>Holding the screen will make the top-right number turn pink. Releasing the screen will submit the corresponding digit for when the screen was held. Continuing to hold the screen will cancel the submission.</li>
+						<li>Holding the screen temporarily stores the number in the top-right. Releasing the screen submits the earliest unfilled position with the stored number's digit in the same position. Continuing to hold cancels the submission.</li>
 						<ul>
-							<li>Hold and release the screen when the left digit of the 3-digit number matches the left digit on the module.</li>
+							<li>Hold and release the screen when the <strong>leftmost</strong> digit of the 3-digit number matches the <strong>leftmost</strong> digit on the module.</li>
 							<br>
-							<li>Hold and release the screen when the middle digit of the 3-digit number matches the middle digit on the module.</li>
-							<br>
-							<li>Hold and release the screen when the right digit of the 3-digit number matches the right digit on the module.</li>
+							<li>Do the same with the <strong>middlemost</strong> digit, then the <strong>rightmost</strong> digit.</li>
 						</ul>
 						<li>The uplink between the assigned vault and the system will be completed, and the module will be disarmed, making it completely safe to interact with.</li>
 					</ul>
@@ -1292,6 +1313,1646 @@
 				</div>
                 <div class="page-footer relative-footer">Page 3 of 3</div>
             </div>
+			<div class="page page-bg-04">
+                <div class="page-header">
+                    <span class="page-header-doc-title">Keep Talking and Nobody Explodes Mod</span>
+                    <span class="page-header-section-title">octOS</span>
+                </div>
+                <div class="page-content">
+				    <img src="img/Component/hexOS.svg" class="diagram">
+                    <h2>On the Subject of octOS</h2>
+                    <p class="flavour-text">"This thing is hazardous to even stand near, and you want to handle it with your BARE HANDS?"</p>
+
+					<p>All vault uplink modules are built to hold stability through any errors, but if the user inputs the shutdown code "888" before playing the sequence and the bottom-right object spins clockwise, the materials contained within the linked vault will completely destabilize, and the module will be overloaded.</p>
+					<p>This will make calculating the correct value significantly more difficult, but it will also send off a much greater payout in energy when successfully solved.</p>
+				
+					<p style="font-style: italic;">NOTE: For the entire module, you should never discard leading 0's!</p>
+					
+					<h3>Rhythm Identification II (4-bit)</h3>
+					<p>Pressing and immeditely releasing it will alternate between playing 2 different rhythms each time it's played. Find both rhythms where black is a chord played and concatenate both values together. (23 and 10 = 2310)</p>
+					<table style="transform: scale(0.6); margin-left: -225px; margin-top: -110px; border: 3px solid black;">
+						<tr>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<th>00</th>
+						</tr>
+						<tr>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<th>01</th>
+						</tr>
+						<tr>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<th>02</th>
+						</tr>
+						<tr>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<th>03</th>
+						</tr>
+						<tr>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<th>10</th>
+						</tr>
+						<tr>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<th>11</th>
+						</tr>
+						<tr>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<th>12</th>
+						</tr>
+						<tr>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<th>13</th>
+						</tr>
+						<tr>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<th>20</th>
+						</tr>
+						<tr>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<th>21</th>
+						</tr>
+						<tr>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<th>22</th>
+						</tr>
+						<tr>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<th>23</th>
+						</tr>
+						<tr>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<th>30</th>
+						</tr>
+						<tr>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<th>31</th>
+						</tr>
+						<tr>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<th>32</th>
+						</tr>
+						<tr>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="border"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<td class="black"></td>
+							<th>33</th>
+						</tr>
+					</table>
+					
+					<h3 style="margin-top: -80px;">Perfect Cipher II</h3>
+					<p>On press, the monitor alternates between 2 visual sequences containing 3 patterns in 2 colors. 3 groups of patterns will be shown per press. For each group, note down the 3 patterns and the color that flashed least. Obtain a letter using these colors. Move across the letter table in accordance to the symbols. The resulting letter is the deciphered letter.</p>
+					
+				</div>
+                <div class="page-footer relative-footer">Page 1 of 4</div>
+			</div>
+			<div class="page page-bg-05">
+                <div class="page-header">
+                    <span class="page-header-doc-title">Keep Talking and Nobody Explodes Mod</span>
+                    <span class="page-header-section-title">octOS</span>
+                </div>
+                <div class="page-content">
+					
+					<h3>Perfect Cipher II (Continued...)</h3>
+					
+					<table style="transform: scale(0.85); margin-left: -65px;">						
+						<tr>
+							<td style="background-color: #000000;">&ensp;</td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+                        </tr>			
+						<tr>
+							<td style="background-color: #000000;">&ensp;</td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+                        </tr>				
+						<tr>
+							<td style="background-color: #000000;"><br></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+							<td style="background-color: #000000;"></td>
+							<td style="background-color: #ffffff;"></td>
+							<td style="background-color: #ff00ff;"></td>
+                        </tr>				
+						<tr>
+							<td>&nbsp;</td>
+							<td>I</td>
+							<td>R</td>
+							<td>C</td>
+							<td>L</td>
+							<td>U</td>
+							<td>F</td>
+							<td>O</td>
+							<td>X</td>
+							<td>A</td>
+							<td>J</td>
+							<td>S</td>
+							<td>D</td>
+							<td>M</td>
+							<td>V</td>
+							<td>G</td>
+							<td>P</td>
+							<td>Y</td>
+							<td>B</td>
+							<td>K</td>
+							<td>T</td>
+							<td>E</td>
+							<td>N</td>
+							<td>W</td>
+							<td>H</td>
+							<td>Q</td>
+							<td>Z</td>
+                        </tr>			
+                    </table>
+					
+					<table>
+						<tr>
+							<th><img src="img/hexOS/whiteC.png" width="30" height="30"></th>
+							<th><img src="img/hexOS/whiteCsharp.png" width="30" height="30"></th>
+							<th><img src="img/hexOS/whiteD.png" width="30" height="30"></th>
+							<th><img src="img/hexOS/whiteDsharp.png" width="30" height="30"></th>
+							<th><img src="img/hexOS/whiteE.png" width="30" height="30"></th>
+							<th><img src="img/hexOS/whiteF.png" width="30" height="30"></th>
+							<th><img src="img/hexOS/whiteFsharp.png" width="30" height="30"></th>
+							<th><img src="img/hexOS/whiteG.png" width="30" height="30"></th>
+							<th><img src="img/hexOS/whiteGsharp.png" width="30" height="30"></th>
+							<th><img src="img/hexOS/whiteA.png" width="30" height="30"></th>
+							<th><img src="img/hexOS/whiteAsharp.png" width="30" height="30"></th>
+							<th><img src="img/hexOS/whiteB.png" width="30" height="30"></th>
+						</tr>
+						<tr>
+							<th style="font-size: 11px;">1 Right<br>(C)</th>
+							<th style="font-size: 11px;">1 Left<br>(C#)</th>
+							<th style="font-size: 11px;">2 Right<br>(D)</th>
+							<th style="font-size: 11px;">2 Left<br>(D#)</th>
+							<th style="font-size: 11px;">3 Right<br>(E)</th>
+							<th style="font-size: 11px;">4 Right<br>(F)</th>
+							<th style="font-size: 11px;">4 Left<br>(F#)</th>
+							<th style="font-size: 11px;">5 Right<br>(G)</th>
+							<th style="font-size: 11px;">5 Left<br>(G#)</th>
+							<th style="font-size: 11px;">6 Right<br>(A)</th>
+							<th style="font-size: 11px;">6 Left<br>(A#)</th>
+							<th style="font-size: 11px;">7 Right<br>(B)</th>
+						</tr>
+					</table>
+					
+				<p style="margin-top: 20px;"><strong>Find the first instance of your 6-letter key, and note down its number.</strong></p>
+				<table style="transform: scale(0.95); margin-left: -20px; margin-top: -10px;">
+					<tr>
+						<th>Phrases (1-12)</th>
+						<th>#</th>
+						<td style="background-color: #000000;"></td>
+						<th>Phrases (13-24)</th>
+						<th>#</th>
+					</tr>
+					<tr>
+						<td>a maze with edges like their knives</td>
+						<th>1</th>
+						<td style="background-color: #000000;"></td>
+						<td>what they will make me</td>
+						<th>13</th>
+					</tr>
+					<tr>
+						<td>someday ill be the shape they want me to be</td>
+						<th>2</th>
+						<td style="background-color: #000000;"></td>
+						<td>they found me in my lowest days</td>
+						<th>14</th>
+					</tr>
+					<tr>
+						<td>but i dont know how much more<br>theyll wake away before theyre satisfied</td>
+						<th>3</th>
+						<td style="background-color: #000000;"></td>
+						<td>breathed life back into my frozen body</td>
+						<th>15</th>
+					</tr>
+					<tr>
+						<td>they have sliced away my flesh</td>
+						<th>4</th>
+						<td style="background-color: #000000;"></td>
+						<td>promising a more beautiful future</td>
+						<th>16</th>
+					</tr>
+					<tr>
+						<td>shorn of unsightly limbs and organs</td>
+						<th>5</th>
+						<td style="background-color: #000000;"></td>
+						<td>then i discovered</td>
+						<th>17</th>
+					</tr>
+					<tr>
+						<td>more stitch and scar than human</td>
+						<th>6</th>
+						<td style="background-color: #000000;"></td>
+						<td>what they really wanted</td>
+						<th>18</th>
+					</tr>
+					<tr>
+						<td>if only marble</td>
+						<th>7</th>
+						<td style="background-color: #000000;"></td>
+						<td>they pulled me into their vortex</td>
+						<th>19</th>
+					</tr>
+					<tr>
+						<td>grew back so easily</td>
+						<th>8</th>
+						<td style="background-color: #000000;"></td>
+						<td>and i saw my future reflected in their eyes</td>
+						<th>20</th>
+					</tr>
+					<tr>
+						<td>they have stolen away my spirit</td>
+						<th>9</th>
+						<td style="background-color: #000000;"></td>
+						<td>a shimmering halo of impossible dreams</td>
+						<th>21</th>
+					</tr>
+					<tr>
+						<td>memories scattered into the slipstream</td>
+						<th>10</th>
+						<td style="background-color: #000000;"></td>
+						<td>void of my self</td>
+						<th>22</th>
+					</tr>
+					<tr>
+						<td>i have no idea who i used to be</td>
+						<th>11</th>
+						<td style="background-color: #000000;"></td>
+						<td>it was</td>
+						<th>23</th>
+					</tr>
+					<tr>
+						<td>i can only guess</td>
+						<th>12</th>
+						<td style="background-color: #000000;"></td>
+						<td>perfect</td>
+						<th>24</th>
+					</tr>
+				</table>
+				</div>
+                <div class="page-footer relative-footer">Page 2 of 4</div>
+            </div>
+			<div class="page page-bg-06">
+                <div class="page-header">
+                    <span class="page-header-doc-title">Keep Talking and Nobody Explodes Mod</span>
+                    <span class="page-header-section-title">octOS</span>
+                </div>
+                <div class="page-content">
+				<h3>Logic Gates II</h3>
+				<p>Write down the 30-digit number like in <i>hexOS</i>. It is split into 2 sequences, with the screen cycling 3 digits of <strong>α</strong>, then 3 digits of <strong>β</strong>. Make a sequence called <strong>γ</strong>. Nth digit of <strong>γ</strong> matches the digit in Nth position of <strong>α</strong>, if N is odd, or <strong>β</strong>, if N is even.</p>
+				<p>Go through <strong>γ</strong>'s digits left-to-right to locate the logic gate. Use <strong>EQUALITY</strong> instead if the difference of <strong>α</strong> and <strong>β</strong> is 5. The first 2 digits in <strong>4-bit</strong> is the pair.</p>
+				<p>Take the result, call it an <strong>operand</strong>, and append it as the last digit in <strong>4-bit</strong>, removing the first digit. If now the second and last digits of the <strong>4-bit</strong> are the same, change the <strong>operand</strong> to the smallest number not present in <strong>4-bit</strong>.</p>
+				<p>Obtain a digit from applying the <strong>operand</strong> to the <strong>α</strong> and <strong>β</strong> digits whose position matches the current <strong>γ</strong> position. Record only the rightmost digit. Concatenate each digit to a sequence called <strong>δ</strong>.</p>
+				
+					<table style="float: left;">		
+						<tr>
+							<th colspan="5">AND (0)</th>
+						</tr>
+						<tr>
+							<th><sub>L</sub><sup>R</sup></th>
+							<th style="background-color: #ff6666;">0</th>
+							<th style="background-color: #ffff66;">1</th>
+							<th style="background-color: #66ff66;">2</th>
+							<th style="background-color: #66ffff;">3</th>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ff6666;">0</th>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ff9999;">0</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ffff66;">1</th>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ffff99;">1</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #66ff66;">2</th>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ff99;">2</td>
+                        </tr>						
+						<tr>
+							<th style="background-color: #66ffff;">3</th>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ffff;">3</td>
+                        </tr>			
+                    </table>
+					
+					<table style="float: left;">		
+						<tr>
+							<th colspan="5">OR (1)</th>
+						</tr>
+						<tr>
+							<th><sub>L</sub><sup>R</sup></th>
+							<th style="background-color: #ff6666;">0</th>
+							<th style="background-color: #ffff66;">1</th>
+							<th style="background-color: #66ff66;">2</th>
+							<th style="background-color: #66ffff;">3</th>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ff6666;">0</th>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ffff;">3</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ffff66;">1</th>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #99ffff;">3</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #66ff66;">2</th>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ffff;">3</td>
+                        </tr>						
+						<tr>
+							<th style="background-color: #66ffff;">3</th>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #99ffff;">3</td>
+                        </tr>			
+                    </table>
+					
+					<table style="float: left;">		
+						<tr>
+							<th colspan="5">NAND (2)</th>
+						</tr>
+						<tr>
+							<th><sub>L</sub><sup>R</sup></th>
+							<th style="background-color: #ff6666;">0</th>
+							<th style="background-color: #ffff66;">1</th>
+							<th style="background-color: #66ff66;">2</th>
+							<th style="background-color: #66ffff;">3</th>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ff6666;">0</th>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #99ffff;">3</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ffff66;">1</th>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #99ff99;">2</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #66ff66;">2</th>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #ffff99;">1</td>
+                        </tr>						
+						<tr>
+							<th style="background-color: #66ffff;">3</th>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #ff9999;">0</td>
+                        </tr>			
+                    </table>
+					
+					<table style="float: left;">		
+						<tr>
+							<th colspan="1">#</th>
+							<th colspan="1">Operand</th>
+						</tr>
+						<tr>
+							<th style="background-color: #ff6666;">0</th>
+							<td style="background-color: #ff9999;">α*β</td>
+                        </tr>	
+						<tr>
+							<th style="background-color: #ffff66;">1</th>
+							<td style="background-color: #ffff99;">α+β</td>
+                        </tr>
+						<tr>
+							<th style="background-color: #66ff66;">2</th>
+							<td style="background-color: #99ff99;">min(α,β)</td>
+                        </tr>
+						<tr>
+							<th style="background-color: #66ffff;">3</th>
+							<td style="background-color: #99ffff;">max(α,β)</td>
+                        </tr>
+						
+						<tr>
+							<td colspan="2" style="opacity: 0;">#</td>
+                        </tr>
+					</table>
+					
+					<table style="float: left;">		
+						<tr>
+							<th colspan="5">NOR (3)</th>
+						</tr>
+						<tr>
+							<th><sub>L</sub><sup>R</sup></th>
+							<th style="background-color: #ff6666;">0</th>
+							<th style="background-color: #ffff66;">1</th>
+							<th style="background-color: #66ff66;">2</th>
+							<th style="background-color: #66ffff;">3</th>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ff6666;">0</th>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #ff9999;">0</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ffff66;">1</th>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ff9999;">0</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #66ff66;">2</th>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #ff9999;">0</td>
+                        </tr>						
+						<tr>
+							<th style="background-color: #66ffff;">3</th>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ff9999;">0</td>
+                        </tr>			
+                    </table>
+					
+					<table style="float: left;">		
+						<tr>
+							<th colspan="5">XOR (4)</th>
+						</tr>
+						<tr>
+							<th><sub>L</sub><sup>R</sup></th>
+							<th style="background-color: #ff6666;">0</th>
+							<th style="background-color: #ffff66;">1</th>
+							<th style="background-color: #66ff66;">2</th>
+							<th style="background-color: #66ffff;">3</th>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ff6666;">0</th>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ffff;">3</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ffff66;">1</th>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #99ff99;">2</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #66ff66;">2</th>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ffff99;">1</td>
+                        </tr>						
+						<tr>
+							<th style="background-color: #66ffff;">3</th>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #ff9999;">0</td>
+                        </tr>			
+                    </table>
+					
+					<table style="float: left;">		
+						<tr>
+							<th colspan="5">XNOR (5)</th>
+						</tr>
+						<tr>
+							<th><sub>L</sub><sup>R</sup></th>
+							<th style="background-color: #ff6666;">0</th>
+							<th style="background-color: #ffff66;">1</th>
+							<th style="background-color: #66ff66;">2</th>
+							<th style="background-color: #66ffff;">3</th>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ff6666;">0</th>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #ff9999;">0</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ffff66;">1</th>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ffff99;">1</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #66ff66;">2</th>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #99ff99;">2</td>
+                        </tr>						
+						<tr>
+							<th style="background-color: #66ffff;">3</th>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ffff;">3</td>
+                        </tr>
+                    </table>
+					
+					<table style="float: left;">		
+						<tr>
+							<th colspan="5">MIN (6)</th>
+						</tr>
+						<tr>
+							<th><sub>L</sub><sup>R</sup></th>
+							<th style="background-color: #ff6666;">0</th>
+							<th style="background-color: #ffff66;">1</th>
+							<th style="background-color: #66ff66;">2</th>
+							<th style="background-color: #66ffff;">3</th>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ff6666;">0</th>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ff9999;">0</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ffff66;">1</th>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #ffff99;">1</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #66ff66;">2</th>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ff99;">2</td>
+                        </tr>						
+						<tr>
+							<th style="background-color: #66ffff;">3</th>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ffff;">3</td>
+                        </tr>			
+                    </table>
+					
+					<table style="float: left;">		
+						<tr>
+							<th colspan="5">MAX (7)</th>
+						</tr>
+						<tr>
+							<th><sub>L</sub><sup>R</sup></th>
+							<th style="background-color: #ff6666;">0</th>
+							<th style="background-color: #ffff66;">1</th>
+							<th style="background-color: #66ff66;">2</th>
+							<th style="background-color: #66ffff;">3</th>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ff6666;">0</th>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ffff;">3</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ffff66;">1</th>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ffff;">3</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #66ff66;">2</th>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ffff;">3</td>
+                        </tr>						
+						<tr>
+							<th style="background-color: #66ffff;">3</th>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #99ffff;">3</td>
+                        </tr>			
+                    </table>
+					
+					<table style="float: left;">		
+						<tr>
+							<th colspan="5">HALF ADDER (8)</th>
+						</tr>
+						<tr>
+							<th><sub>L</sub><sup>R</sup></th>
+							<th style="background-color: #ff6666;">0</th>
+							<th style="background-color: #ffff66;">1</th>
+							<th style="background-color: #66ff66;">2</th>
+							<th style="background-color: #66ffff;">3</th>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ff6666;">0</th>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ffff;">3</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ffff66;">1</th>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #ff9999;">0</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #66ff66;">2</th>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ffff99;">1</td>
+                        </tr>						
+						<tr>
+							<th style="background-color: #66ffff;">3</th>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #99ff99;">2</td>
+                        </tr>
+                    </table>
+					
+					<table style="float: left;">		
+						<tr>
+							<th colspan="5">FULL ADDER (9)</th>
+						</tr>
+						<tr>
+							<th><sub>L</sub><sup>R</sup></th>
+							<th style="background-color: #ff6666;">0</th>
+							<th style="background-color: #ffff66;">1</th>
+							<th style="background-color: #66ff66;">2</th>
+							<th style="background-color: #66ffff;">3</th>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ff6666;">0</th>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #ff9999;">0</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ffff66;">1</th>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ffff99;">1</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #66ff66;">2</th>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #99ff99;">2</td>
+                        </tr>						
+						<tr>
+							<th style="background-color: #66ffff;">3</th>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ffff99;">1</td>
+							<td style="background-color: #99ff99;">2</td>
+							<td style="background-color: #99ffff;">3</td>
+                        </tr>
+                    </table>
+					
+					<table style="float: left;">		
+						<tr>
+							<th colspan="5">EQUALITY (=)</th>
+						</tr>
+						<tr>
+							<th><sub>L</sub><sup>R</sup></th>
+							<th style="background-color: #ff6666;">0</th>
+							<th style="background-color: #ffff66;">1</th>
+							<th style="background-color: #66ff66;">2</th>
+							<th style="background-color: #66ffff;">3</th>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ff6666;">0</th>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ff9999;">0</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #ffff66;">1</th>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ff9999;">0</td>
+                        </tr>				
+						<tr>
+							<th style="background-color: #66ff66;">2</th>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #99ffff;">3</td>
+							<td style="background-color: #ff9999;">0</td>
+                        </tr>						
+						<tr>
+							<th style="background-color: #66ffff;">3</th>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #ff9999;">0</td>
+							<td style="background-color: #99ffff;">3</td>
+                        </tr>
+                    </table>
+				</div>
+                <div class="page-footer relative-footer">Page 3 of 4</div>
+            </div>
+			<div class="page page-bg-07">
+                <div class="page-header">
+                    <span class="page-header-doc-title">Keep Talking and Nobody Explodes Mod</span>
+                    <span class="page-header-section-title">octOS</span>
+                </div>
+                <div class="page-content">
+                    <h3>Sequence Addition II</h3>
+					<ul>
+						<li>Add each digit in <strong>δ</strong> with the number obtained in <strong>Perfect Cipher II</strong>. Apply Digital Root if any exceed 9.</li>
+						<br>
+						<li>Split <strong>δ</strong> into groups of 3. Add the 2 left digits with [the right * 10].<br>Subtract 100 if any result yields 3 digits.<br>Link all sums from left to right into one big number.</li>
+						<h4>Sequence Modification II</h4>
+						<ul>
+							<li>If the last digit is an 8, replace all digits with the sum of that digit and their neighbouring digits. If the sum is a 2 digit number, take the rightmost digit.</li>
+							<br>
+							<li>Otherwise, if the last digit is 0, divide the number by 10. Replace the last digit with an 8 if <strong>δ</strong> is more than 3 digits long.</li>
+							<br>
+							<li>Otherwise, if the last digit is divisible by 3, replace all 3's, 6's, and 9's with either 7 on positions not divisible by 3, or 0 otherwise.</li>
+							<br>
+							<li>Otherwise, if the last digit is prime, add prime-positioned digits, and subtract non-prime-positioned digits with the last. If outside 0-9, add/subtract 10 accordingly.</li>
+							<br>
+							<li>Otherwise, subtract all digits with the last. If negative, add 10.</li>
+							<br>
+							<li>Repeat <strong>Sequence Modification II</strong> until <strong>δ</strong> is 3 digits long.</li>
+						</ul>
+					</ul>
+					<h3>Submitting II</h3>
+					<ul>
+						<li>Submit <strong>δ</strong> the same way as in <i>hexOS</i>. Striking the module will safe-boot it back into <i>hexOS</i>, and all of your progress will go in vain.</li>
+					</ul>
+					
+					<p><strong>NOTE: Due to the nature of <i>octOS</i> instability, it is unable to slow down the informational distribution upon a recieved strike.</strong></p>
+				</div>
+                <div class="page-footer relative-footer">Page 4 of 4</div>
         </div>
     </div>
 </body>

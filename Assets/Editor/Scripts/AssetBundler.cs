@@ -62,7 +62,7 @@ public class AssetBundler
     /// List of MonoScripts modified during the bundling process that need to be restored after.
     /// </summary>
     private List<string> scriptPathsToRestore = new List<string>();
-    
+
     /// <summary>
     /// A variable for holding the current BuildTarget, for Mac compatibility.
     /// </summary>
@@ -85,7 +85,7 @@ public class AssetBundler
     {
         Debug.LogFormat("Creating \"{0}\" AssetBundle...", BUNDLE_FILENAME);
 
-        if (ModConfig.Instance == null 
+        if (ModConfig.Instance == null
             || ModConfig.ID == ""
             || ModConfig.OutputFolder == "")
         {
@@ -196,7 +196,7 @@ public class AssetBundler
 
         //modify the csproj (if needed)
         var csproj = File.ReadAllText("ktanemodkit.CSharp.csproj");
-        csproj = csproj.Replace("<AssemblyName>Assembly-CSharp</AssemblyName>", "<AssemblyName>"+ assemblyName + "</AssemblyName>");
+        csproj = csproj.Replace("<AssemblyName>Assembly-CSharp</AssemblyName>", "<AssemblyName>" + assemblyName + "</AssemblyName>");
         File.WriteAllText("modkithelper.CSharp.csproj", csproj);
 
         string path = "modkithelper.CSharp.csproj";
@@ -258,6 +258,7 @@ public class AssetBundler
         }
 
         managedReferences.Add(unityAssembliesLocation + "UnityEngine");
+        managedReferences.Add(unityAssembliesLocation + "../UnityExtensions/Unity/GUISystem/UnityEngine.UI");
 
         //Next we need to grab some type references and use reflection to build things the way Unity does.
         //Note that EditorUtility.CompileCSharp will do *almost* exactly the same thing, but it unfortunately
@@ -283,7 +284,7 @@ public class AssetBundler
 
         //CompilerMessage
         var compilerMessageType = assembly.GetType("UnityEditor.Scripting.Compilers.CompilerMessage");
-        FieldInfo messageField = compilerMessageType.GetField("message"); 
+        FieldInfo messageField = compilerMessageType.GetField("message");
 
         //Start compiling
         beginCompilingMethod.Invoke(monoCompiler, null);
@@ -427,8 +428,8 @@ public class AssetBundler
         //not be accessible within the asset bundle. Unity has deprecated this flag claiming it is now always active, but due to a bug
         //we must still include it (and ignore the warning).
         BuildPipeline.BuildAssetBundles(
-            TEMP_BUILD_FOLDER, 
-            BuildAssetBundleOptions.DeterministicAssetBundle | BuildAssetBundleOptions.CollectDependencies, 
+            TEMP_BUILD_FOLDER,
+            BuildAssetBundleOptions.DeterministicAssetBundle | BuildAssetBundleOptions.CollectDependencies,
             target);
 #pragma warning restore 618
 
@@ -436,6 +437,10 @@ public class AssetBundler
         //that Unity makes), so just copy that to the final output folder
         string srcPath = Path.Combine(TEMP_BUILD_FOLDER, BUNDLE_FILENAME);
         string destPath = Path.Combine(outputFolder, BUNDLE_FILENAME);
+        File.Copy(srcPath, destPath, true);
+
+        srcPath = Path.Combine(TEMP_BUILD_FOLDER, "hex.bundle");
+        destPath = Path.Combine(outputFolder, "hex.bundle");
         File.Copy(srcPath, destPath, true);
     }
 
@@ -446,7 +451,7 @@ public class AssetBundler
     {
         File.WriteAllText(outputFolder + "/modInfo.json", ModConfig.Instance.ToJson());
 
-        if(ModConfig.PreviewImage != null)
+        if (ModConfig.PreviewImage != null)
         {
             string previewImageAssetPath = AssetDatabase.GetAssetPath(ModConfig.PreviewImage);
 
@@ -472,7 +477,7 @@ public class AssetBundler
     /// </summary>
     protected void CopyModSettings()
     {
-        if(File.Exists("Assets/modSettings.json"))
+        if (File.Exists("Assets/modSettings.json"))
         {
             File.Copy("Assets/modSettings.json", outputFolder + "/modSettings.json");
         }
@@ -482,7 +487,7 @@ public class AssetBundler
     /// </summary>
     protected void CopyManual()
     {
-        if(Directory.Exists("Manual/pdfs"))
+        if (Directory.Exists("Manual/pdfs"))
         {
             DirectoryCopyPDFs("Manual/pdfs", outputFolder + "/Manual", true);
         }
@@ -515,11 +520,11 @@ public class AssetBundler
         foreach (FileInfo file in files)
         {
             string temppath = Path.Combine(destDirName, file.Name);
-            if(file.Extension.ToLower() == ".pdf")
+            if (file.Extension.ToLower() == ".pdf")
             {
                 file.CopyTo(temppath, false);
             }
-            
+
         }
 
         // If copying subdirectories, copy them and their contents to new location.
@@ -619,25 +624,25 @@ public class AssetBundler
             };
 
         string[] prefabsGUIDs = AssetDatabase.FindAssets("t: prefab");
-        foreach(string prefabGUID in prefabsGUIDs)
+        foreach (string prefabGUID in prefabsGUIDs)
         {
             string path = AssetDatabase.GUIDToAssetPath(prefabGUID);
             GameObject go = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-            if(go == null)
+            if (go == null)
             {
                 continue;
             }
-            foreach(Renderer renderer in go.GetComponentsInChildren<Renderer>())
+            foreach (Renderer renderer in go.GetComponentsInChildren<Renderer>())
             {
-                if(renderer.sharedMaterials != null && renderer.sharedMaterials.Length > 0)
+                if (renderer.sharedMaterials != null && renderer.sharedMaterials.Length > 0)
                 {
-                    if(renderer.gameObject.GetComponent<KMMaterialInfo>() == null)
+                    if (renderer.gameObject.GetComponent<KMMaterialInfo>() == null)
                     {
                         renderer.gameObject.AddComponent<KMMaterialInfo>();
                     }
                     KMMaterialInfo materialInfo = renderer.gameObject.GetComponent<KMMaterialInfo>();
                     materialInfo.ShaderNames = new List<string>();
-                    foreach(Material material in renderer.sharedMaterials)
+                    foreach (Material material in renderer.sharedMaterials)
                     {
                         if (material == null)
                         {
@@ -653,11 +658,11 @@ public class AssetBundler
                         }
                         materialInfo.ShaderNames.Add(material.shader.name);
 
-                        if(material.shader.name == "Standard")
+                        if (material.shader.name == "Standard")
                         {
                             Debug.LogWarning(string.Format("Use of Standard shader in object {0}. Standard shader should be avoided as it will cause your mod to break in future versions of the game.", renderer.gameObject));
                         }
-                        else if(!supportedShaders.Contains(material.shader.name))
+                        else if (!supportedShaders.Contains(material.shader.name))
                         {
                             Debug.LogWarning(string.Format("Use of custom shader {0} in object {1}. Use of custom shaders will break mod compatibility on game update requiring rebuild. Recommend using only supported shaders.", material.shader.name, renderer.gameObject));
                         }
