@@ -12,7 +12,7 @@ public class HexOS : MonoBehaviour
 {
     public class ModSettingsJSON
     {
-        public bool disableOctOS, experimentalShake, forceAltSolve;
+        public bool disableOctOS, fastStrike, experimentalShake, forceAltSolve;
         public byte flashOtherColors;
         public float delayPerBeat;
         public string customSolveQuote;
@@ -36,7 +36,7 @@ public class HexOS : MonoBehaviour
     string sum = "", screen = "";
 
     private static bool _forceAltSolve, _experimentalShake, _canBeOctOS;
-    private bool _lightsOn, _octOS, _isHolding, _playSequence, _hasPlayedSequence, _octAnimating;
+    private bool _lightsOn, _octOS, _isHolding, _playSequence, _hasPlayedSequence, _octAnimating, _fastStrike;
     private static byte _flashOtherColors = 5;
     private sbyte _press = -1, _held = 0;
     private readonly char[] _tempDecipher = new char[2];
@@ -69,6 +69,7 @@ public class HexOS : MonoBehaviour
 
         // Set the variables in case if they don't get set by ModSettings.
         _canBeOctOS = true;
+        _fastStrike = false;
         _experimentalShake = false;
         _forceAltSolve = false;
         _flashOtherColors = 5;
@@ -87,6 +88,7 @@ public class HexOS : MonoBehaviour
             {
                 // Get variables from mod settings.
                 _canBeOctOS = !settings.disableOctOS;
+                _fastStrike = settings.fastStrike;
                 _experimentalShake = settings.experimentalShake;
                 _forceAltSolve = settings.forceAltSolve;
                 _flashOtherColors = Math.Min(settings.flashOtherColors, (byte)6);
@@ -183,7 +185,7 @@ public class HexOS : MonoBehaviour
     private void Activate()
     {
         // Plays the foreground video as decoration.
-        VideoGrid.clip = Application.isEditor ? Clips[2] : VideoLoader.clips[2];
+        VideoGrid.clip = Application.isEditor ? Clips[0] : VideoLoader.clips[0];
         VideoGrid.Prepare();
         VideoGrid.Play();
 
@@ -429,17 +431,18 @@ public class HexOS : MonoBehaviour
         Button.AddInteractionPunch(25);
 
         // Plays the solve animation.
-        Audio.PlaySoundAtTransform("octSolve", Module.transform);
-
         VideoOct.transform.localPosition = new Vector3(0, 0.84f, 0);
-        VideoOct.clip = Application.isEditor ? Clips[0] : VideoLoader.clips[0];
+        VideoRenderer.material.color = new Color32(255, 255, 255, 255);
+        VideoOct.clip = Application.isEditor ? Clips[1] : VideoLoader.clips[1];
         VideoOct.Prepare();
         VideoOct.Play();
-        
+
+        Audio.PlaySoundAtTransform("octSolve", Module.transform);
+
         // The exact amount of seconds for the audio clip to go quiet is 10.122 seconds.
         yield return new WaitForSeconds(10.122f);
 
-        Debug.LogFormat("[hexOS #{0}]: The correct number for octOS was submitted, module solved! +22 additional points!", _moduleId);
+        Debug.LogFormat("[hexOS #{0}]: The correct number for octOS was submitted, module solved! +24 additional points!", _moduleId);
         isSolved = true;
         Module.HandlePass();
         StopAllCoroutines();
@@ -465,25 +468,54 @@ public class HexOS : MonoBehaviour
         Background.material.SetColor("_Color", HexOSStrings.TransparentColors[3]);
         Foreground.material.SetColor("_Color", Color.white);
 
-        // Plays the strike animation.
-        Audio.PlaySoundAtTransform("octStrike", Module.transform);
-
         VideoOct.transform.localPosition = new Vector3(0, 0.84f, 0);
         VideoRenderer.material.color = new Color32(255, 255, 255, 0);
-        VideoOct.clip = Application.isEditor ? Clips[1] : VideoLoader.clips[1];
-        VideoOct.Prepare();
-        VideoOct.Play();
-
-        // For reference, the audio clip is 11.85 seconds.
-        byte c = 0;
-        while (c != 255)
+        
+        // Long animation.
+        if (!_fastStrike)
         {
-            c++;
+            VideoOct.clip = Application.isEditor ? Clips[2] : VideoLoader.clips[2];
+            VideoOct.Prepare();
+            VideoOct.Play();
+            Audio.PlaySoundAtTransform("octStrike", Module.transform);
+
+            byte c = 248;
             VideoRenderer.material.color = new Color32(255, 255, 255, c);
-            yield return new WaitForSeconds(0.04f);
+
+            while (c > 128)
+            {
+                c -= 20;
+                VideoRenderer.material.color = new Color32(255, 255, 255, c);
+                yield return new WaitForSeconds(0.1f);
+            }
+
+            while (c != 252)
+            {
+                c += 4;
+                VideoRenderer.material.color = new Color32(255, 255, 255, c);
+                yield return new WaitForSeconds(1.484375f);
+            }
+
+            yield return new WaitWhile(() => VideoOct.isPlaying);
         }
 
-        yield return new WaitForSeconds(4);
+        // Short animation.
+        else
+        {
+            VideoOct.clip = Application.isEditor ? Clips[3] : VideoLoader.clips[3];
+            VideoOct.Prepare();
+            VideoOct.Play();
+            Audio.PlaySoundAtTransform("octStrikeFast", Module.transform);
+            // For reference, the audio clip is 11.85 seconds.
+            byte c = 0;
+            while (c != 255)
+            {
+                c++;
+                VideoRenderer.material.color = new Color32(255, 255, 255, c);
+                yield return new WaitForSeconds(0.04f);
+            }
+            yield return new WaitWhile(() => VideoOct.isPlaying);
+        }
 
         VideoOct.transform.localPosition = new Vector3(0, -0.42f, 0);
 
@@ -819,27 +851,27 @@ public class HexOS : MonoBehaviour
             {
                 switch (decipher[j])
                 {
-                    case 'A':
+                    case 'A': // AND
                     case 'Z':
                         logicOutput[(i * 2) + j] = (sbyte)(Math.Min(logicA[i], logicB[i]) - 1);
                         break;
 
-                    case 'B':
+                    case 'B': // NAND
                     case 'Y':
                         logicOutput[(i * 2) + j] = (sbyte)(2 - Math.Min(logicA[i], logicB[i]) - 1);
                         break;
 
-                    case 'C':
+                    case 'C': // XAND
                     case 'X':
                         logicOutput[(i * 2) + j] = (sbyte)(Mathf.Clamp(logicA[i] + logicB[i], 0, 1) + Convert.ToByte(logicA[i] + logicB[i] == 4) - 1);
                         break;
 
-                    case 'D':
+                    case 'D': // COMPARISON
                     case 'W':
                         logicOutput[(i * 2) + j] = (sbyte)(Convert.ToByte(logicA[i] > logicB[i]) + Convert.ToByte(logicA[i] >= logicB[i]) - 1);
                         break;
 
-                    case 'E':
+                    case 'E': // A=1 THEN B
                     case 'V':
                         if (logicA[i] == logicB[i])
                             logicOutput[(i * 2) + j] = (sbyte)(logicA[i] - 1);
@@ -849,28 +881,28 @@ public class HexOS : MonoBehaviour
                             logicOutput[(i * 2) + j] = (sbyte)(logicA[i] - 1);
                         break;
 
-                    case 'F':
+                    case 'F': // SUM
                     case 'U':
                     case ' ':
                         logicOutput[(i * 2) + j] = (sbyte)(((logicA[i] + logicB[i] + 2) % 3) - 1);
                         break;
 
-                    case 'G':
+                    case 'G': // EQUALITY
                     case 'T':
                         logicOutput[(i * 2) + j] = (sbyte)((2 * Convert.ToByte(logicA[i] == logicB[i])) - 1);
                         break;
 
-                    case 'H':
+                    case 'H': // OR
                     case 'S':
                         logicOutput[(i * 2) + j] = (sbyte)(Math.Max(logicA[i], logicB[i]) - 1);
                         break;
 
-                    case 'I':
+                    case 'I': // NOR
                     case 'R':
                         logicOutput[(i * 2) + j] = (sbyte)((2 - Math.Max(logicA[i], logicB[i])) - 1);
                         break;
 
-                    case 'J':
+                    case 'J': // XOR
                     case 'Q':
                         if (logicA[i] == 1 || logicB[i] == 1)
                             logicOutput[(i * 2) + j] = 0;
@@ -880,7 +912,7 @@ public class HexOS : MonoBehaviour
                             logicOutput[(i * 2) + j] = -1;
                         break;
 
-                    case 'K':
+                    case 'K': // GULLIBILITY
                     case 'P':
                         if (logicA[i] + logicB[i] == 2)
                             logicOutput[(i * 2) + j] = 0;
@@ -890,7 +922,7 @@ public class HexOS : MonoBehaviour
                             logicOutput[(i * 2) + j] = -1;
                         break;
 
-                    case 'L':
+                    case 'L': // NA THEN NB
                     case 'O':
                         if (logicA[i] == 1)
                             logicOutput[(i * 2) + j] = 0;
@@ -900,7 +932,7 @@ public class HexOS : MonoBehaviour
                             logicOutput[(i * 2) + j] = -1;
                         break;
 
-                    case 'M':
+                    case 'M': // IMPLIES
                     case 'N':
                         logicOutput[(i * 2) + j] = (sbyte)(Mathf.Clamp(4 - (logicA[i] + logicB[i]), 0, 2) - 1);
                         break;
@@ -943,9 +975,9 @@ public class HexOS : MonoBehaviour
         while (strSum.Length < 4)
             strSum = '0' + strSum;
 
-        byte[] sum = new byte[4];
+        sbyte[] sum = new sbyte[4];
         for (byte i = 0; i < sum.Length; i++)
-            sum[i] = (byte)char.GetNumericValue(strSum[i]);
+            sum[i] = (sbyte)char.GetNumericValue(strSum[i]);
 
         Debug.LogFormat("[hexOS #{0}]: The first rhythm sequence is {1}.", _moduleId, HexOSStrings.OctNotes[_octRhythms[0]]);
         Debug.LogFormat("[hexOS #{0}]: The second rhythm sequence is {1}.", _moduleId, HexOSStrings.OctNotes[_octRhythms[1]]);
@@ -1045,25 +1077,49 @@ public class HexOS : MonoBehaviour
             beta += screen[i + 3].ToString() + screen[i + 4].ToString() + screen[i + 5].ToString();
         }
 
-        Debug.LogFormat("[hexOS #{0}]: The alpha sequence is {1}.", _moduleId, alpha);
-        Debug.LogFormat("[hexOS #{0}]: The beta sequence is {1}.", _moduleId, beta);
+        Debug.LogFormat("[hexOS #{0}]: α = {1}.", _moduleId, alpha);
+        Debug.LogFormat("[hexOS #{0}]: β = {1}.", _moduleId, beta);
 
-        // Half of gamma is alpha, the other half is beta, unless if the difference between both is 5.
+        // Half of gamma is alpha, the other half is beta, with exceptions.
         for (int i = 0; i < alpha.Length; i++)
         {
-            if (Math.Abs(char.GetNumericValue(alpha[i]) - char.GetNumericValue(beta[i])) == 5)
+            // Special PRODUCT case
+            if (i > 0 && beta[i] == beta[i - 1])
+                gamma += '*';
+
+            // Special SUM case
+            else if (i > 0 && alpha[i] == alpha[i - 1])
+                gamma += '+';
+
+            // Special EQUALITY case
+            else if (Math.Abs(char.GetNumericValue(alpha[i]) - char.GetNumericValue(beta[i])) == 5)
                 gamma += '=';
 
+            // Add ALPHA
             else if (i % 2 == 0)
                 gamma += alpha[i];
 
+            // Add BETA
             else
                 gamma += beta[i];
+
+            // Special IMPLIES case, has to be checked last.
+            if (i > 0 && gamma[i] == gamma[i - 1])
+                gamma = gamma.Remove(gamma.Length - 1, 1) + '>';
         }
 
-        Debug.LogFormat("[hexOS #{0}]: The gamma sequence is {1}.", _moduleId, gamma);
+        Debug.LogFormat("[hexOS #{0}]: γ = {1}.", _moduleId, gamma);
 
-        string operandLog = "";
+        // Checks if NOT gate should be used.
+        bool notGate = false;
+        if (sum[0] == sum[2] || sum[1] == sum[3])
+        {
+            notGate = true;
+            for (byte i = 0; i < sum.Length; i++)
+                sum[i] = (sbyte)(4 - sum[i]);
+        }
+
+        string sumLog = "";
 
         // Logic gates.
         for (byte i = 0; i < gamma.Length; i++)
@@ -1071,88 +1127,136 @@ public class HexOS : MonoBehaviour
             byte operand = 0;
             switch (gamma[i])
             {
-                case '0': // AND
-                    if (sum[0] % 2 == 1 && sum[1] % 2 == 1)
-                        operand++;
-                    if (sum[0] / 2 == 1 && sum[1] / 2 == 1)
-                        operand += 2;
+                case '0': operand = (byte)Math.Min(sum[0], sum[1]); break; // AND
+                case '1': operand = (byte)Math.Max(sum[0], sum[1]); break; // OR
+                case '2': operand = (byte)(4 - Math.Min(sum[0], sum[1])); break; // NAND
+                case '3': operand = (byte)(4 - Math.Max(sum[0], sum[1])); break; // NOR
+
+                case '4': // XAND
+                    if (sum[0] <= 1 && sum[1] <= 1)
+                        operand = (byte)Math.Min(sum[0], sum[1]);
+                    else if (sum[0] >= 3 && sum[1] >= 3)
+                        operand = (byte)Math.Max(sum[0], sum[1]);
+                    else
+                        operand = 2;
                     break;
 
-                case '1': // OR
-                    if (sum[0] % 2 == 1 || sum[1] % 2 == 1)
-                        operand++;
-                    if (sum[0] / 2 == 1 || sum[1] / 2 == 1)
-                        operand += 2;
+                case '5': // XOR
+                    if (sum[0] <= 1 && sum[1] <= 1)
+                        operand = (byte)Math.Min(sum[0], sum[1]);
+                    else if (sum[0] >= 3 && sum[1] >= 3)
+                        operand = (byte)(4 - Math.Max(sum[0], sum[1]));
+                    else if (sum[0] <= 1 && sum[1] >= 3)
+                        operand = (byte)Math.Max(4 - sum[0], sum[1]);
+                    else if (sum[0] >= 3 && sum[1] <= 1)
+                        operand = (byte)Math.Max(sum[0], 4 - sum[1]);
+                    else
+                        operand = 2;
                     break;
 
-                case '2': // NAND
-                    operand = 3;
-                    if (sum[0] % 2 == 1 && sum[1] % 2 == 1)
-                        operand--;
-                    if (sum[0] / 2 == 1 && sum[1] / 2 == 1)
-                        operand -= 2;
+                case '6': operand = (byte)Mathf.Clamp(sum[0] - sum[1] + 2, 0, 4); break; // COMPARISON
+                case '7': operand = (byte)Math.Max(4 - sum[0], sum[1]); break; // GULLIBILITY
+                case '8': operand = (sum[0] % 2 == 1 && sum[1] == 2) || (sum[0] % 4 == 0 && sum[1] % 4 != 0) ? (byte)sum[0] : (byte)sum[1]; break; // A=2 THEN B
+
+                case '9': // NA THEN NB
+                    if (sum[0] % 4 == 0 && sum[1] % 4 == 0 && sum[0] == sum[1])
+                        operand = 4;
+                    else if ((sum[0] == 1 && sum[1] <= 1) || (sum[0] == 3 && sum[1] >= 3))
+                        operand = 3;
+                    else if (sum[0] == 2)
+                        operand = 2;
+                    else if ((sum[0] == 1 && sum[1] >= 2) || (sum[0] == 3 && sum[1] <= 2))
+                        operand = 1;
+                    else
+                        operand = 0;
                     break;
 
-                case '3': // NOR
-                    operand = 3;
-                    if (sum[0] % 2 == 1 || sum[1] % 2 == 1)
-                        operand--;
-                    if (sum[0] / 2 == 1 || sum[1] / 2 == 1)
-                        operand -= 2;
+                case '+': operand = (byte)((sum[0] + sum[1]) % 5); break; // SUM
+                case '*': operand = (byte)((sum[0] * sum[1]) % 5); break; // PRODUCT
+
+                case '>': // IMPLIES
+                    if (sum[0] == 3)
+                        operand = sum[1] == 4 ? (byte)1 : (byte)(sum[1] + 1);
+                    else
+                        operand = (byte)(4 - (Convert.ToByte(sum[1] % Mathf.Pow(2, sum[0]) == 0) * sum[0]));
                     break;
 
-                case '4': // XOR
-                    if (sum[0] % 2 == 1 ^ sum[1] % 2 == 1)
-                        operand++;
-                    if (sum[0] / 2 == 1 ^ sum[1] / 2 == 1)
-                        operand += 2;
-                    break;
-
-                case '5': // XNOR
-                    operand = 3;
-                    if (sum[0] % 2 == 1 ^ sum[1] % 2 == 1)
-                        operand--;
-                    if (sum[0] / 2 == 1 ^ sum[1] / 2 == 1)
-                        operand -= 2;
-                    break;
-
-                case '6': operand = Math.Min(sum[0], sum[1]); break; // MIN
-                case '7': operand = Math.Max(sum[0], sum[1]); break; // MAX
-                case '8': operand = (byte)((sum[0] + sum[1]) % 4); break; // HALF ADDER
-                case '9': operand = (byte)((sum[0] + sum[1] + 1) % 4); break; // FULL ADDER
-                case '=': operand = (byte)(3 * Convert.ToByte(sum[0] == sum[1])); break; // EQUALITY
+                case '=': // EQUALITY
+                    operand = 4;
+                    if (sum[0] / 4 != sum[1] / 4)
+                        operand = 0;
+                    else
+                    {
+                        if (sum[0] % 2 != sum[1] % 2)
+                            operand -= 1;
+                        if (sum[0] / 2 != sum[1] / 2)
+                            operand -= 2;
+                    }
+                    break; 
             }
 
             for (byte j = 0; j < sum.Length - 1; j++) // Shift left
                 sum[j] = sum[j + 1];
 
             if (sum[1] == operand) // If second and fourth operand are the same, find earliest unique number.
-                for (byte j = 0; j < 4; j++)
-                    if (!sum.Contains(j))
-                        operand = j;
+            {
+                if (notGate) // Searches forward for smallest unique number.
+                    for (byte j = 0; j <= 4; j++)
+                        for (byte k = 0; j < sum.Length; j++)
+                        {
+                            if (sum[k] == j)
+                                break;
+                            if (k == sum.Length - 1)
+                            {
+                                operand = j;
+                                goto foundNumber;
+                            }
+                        }
 
-            sum[3] = operand;
-            operandLog += operand;
+                else // Searches backwards for biggest unique number.
+                    for (sbyte l = 4; l >= 0; l--)
+                        for (byte m = 0; m < sum.Length; m++)
+                        {
+                            if (sum[m] == l)
+                                break;
+                            if (m == sum.Length - 1)
+                            {
+                                operand = (byte)l;
+                                goto foundNumber;
+                            }
+                        }
+            }
+
+            // If it has found a number to override the operand with, this is where it will end up going.
+            foundNumber:
+
+            sum[3] = (sbyte)operand;
+
+            // Logs the 4-bit sum.
+            sumLog += sum.Join("");
+            if (i != gamma.Length - 1)
+                sumLog += ", ";
 
             // Delta is equal to the operand from gamma's logic gate applied to alpha and beta.
             switch (operand)
             {
                 case 0: delta += char.GetNumericValue(alpha[i]) * char.GetNumericValue(beta[i]) % 10; break;
-                case 1: delta += (char.GetNumericValue(alpha[i]) + char.GetNumericValue(beta[i])) % 10; break;
-                case 2: delta += Math.Min(char.GetNumericValue(alpha[i]), char.GetNumericValue(beta[i])); break;
-                case 3: delta += Math.Max(char.GetNumericValue(alpha[i]), char.GetNumericValue(beta[i])); break;
+                case 1: delta += Math.Abs(char.GetNumericValue(alpha[i]) - char.GetNumericValue(beta[i])); break;
+                case 2: delta += (char.GetNumericValue(alpha[i]) + char.GetNumericValue(beta[i])) % 10; break;
+                case 3: delta += Math.Min(char.GetNumericValue(alpha[i]), char.GetNumericValue(beta[i])); break;
+                case 4: delta += Math.Max(char.GetNumericValue(alpha[i]), char.GetNumericValue(beta[i])); break;
             }
         }
 
-        Debug.LogFormat("[hexOS #{0}]: The list of operands are {1}.", _moduleId, operandLog);
-        Debug.LogFormat("[hexOS #{0}]: The delta sequence is {1}.", _moduleId, delta);
+        Debug.LogFormat("[hexOS #{0}]: 4-bits = {1}.", _moduleId, sumLog);
+        Debug.LogFormat("[hexOS #{0}]: δ = {1}.", _moduleId, delta);
 
         // Calculates the digital root.
         string screenWithKeyIndex = "", newScreen = "";
         for (byte i = 0; i < delta.Length; i++)
             screenWithKeyIndex += ((byte.Parse(delta[i].ToString()) + keyIndex - 1) % 9) + 1;
 
-        Debug.LogFormat("[hexOS #{0}]: Applying offset {1} to delta: {2}.", _moduleId, keyIndex, screenWithKeyIndex);
+        Debug.LogFormat("[hexOS #{0}]: Applying offset {1} to δ = {2}.", _moduleId, keyIndex, screenWithKeyIndex);
 
         // Combine one-third with two-thirds.
         for (byte i = 0; i < screenWithKeyIndex.Length; i += 3)
@@ -1221,7 +1325,7 @@ public class HexOS : MonoBehaviour
 
         // Remove any additional digits.
         while (newSeq.Length > 3)
-            newSeq = newSeq.Substring(0, newSeq.Length - 1);
+            newSeq = newSeq.Substring(1, newSeq.Length - 1);
 
         // Once you reach here, you have a 3-digit number!
         return newSeq;

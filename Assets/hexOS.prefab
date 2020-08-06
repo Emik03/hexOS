@@ -4481,18 +4481,19 @@ MonoBehaviour:
   m_Script: {fileID: -289456416, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Settings: "{ \t\"disableOctOS\": false, \t\"HowToUse0\": \"Enable/disable the ability
+  Settings: '{   "disableOctOS": false,   "HowToUse0": "Enable/disable the ability
     to go into hard mode by submitting a number without playing the sequence. (default:
-    false)\", \t \t\"experimentalShake\": false, \t\"HowToUse1\": \"Have the module
-    shake upon every played beat, don't use this on serious bombs. :) (default: false)\",
-    \t \t\"forceAltSolve\": false, \t\"HowToUse2\": \"Force the module to play the
-    alternative solve sequence regardless of Forget The Colors' existence. (default:
-    false)\", \t \t\"flashOtherColors\": 5, \t\"HowToUse3\": \"Alter the amount of
-    times other colors flash. Cannot exceed 6. (default: 5)\", \t \t\"delayPerBeat\":
-    0.07, \t\"HowToUse4\": \"Alter the delay between each beat played. Cannot exceed
-    1. (default: 0.07)\", \t \t\"customSolveQuote\": \"\", \t\"HowToUse5\": \"Change
-    the display on the module when it is solved. If left blank, it will pull its default
-    quotes. (default: literally nothing)\" }"
+    false)",    "fastStrike": false,   "HowToUse1": "Exclusive to OctOS, shortens
+    the strike animation to be 15 seconds instead of 57.5 seconds. (default: false)",    "experimentalShake":
+    false,   "HowToUse2": "Have the module shake upon every played beat, don''t use
+    this on serious bombs. :) (default: false)",    "forceAltSolve": false,   "HowToUse3":
+    "Force the module to play the alternative solve sequence regardless of Forget
+    The Colors'' existence. (default: false)",    "flashOtherColors": 5,   "HowToUse4":
+    "Alter the amount of times other colors flash. Cannot exceed 6. (default: 5)",    "delayPerBeat":
+    0.07,   "HowToUse5": "Alter the delay between each beat played. Cannot exceed
+    1. (default: 0.07)",    "customSolveQuote": "",   "HowToUse6": "Change the display
+    on the module when it is solved. If left blank, it will pull its default quotes.
+    (default: literally nothing)" }'
   SettingsPath: 
 --- !u!114 &114658604063397198
 MonoBehaviour:
@@ -4584,9 +4585,10 @@ MonoBehaviour:
   VideoOct: {fileID: 328349943190975812}
   VideoGrid: {fileID: 328304267202025814}
   Clips:
+  - {fileID: 32900000, guid: 3a05c258b2843bb4a919fcd0a9b18e59, type: 3}
   - {fileID: 32900000, guid: 0df43c0688f1ae445aae71b131788495, type: 3}
   - {fileID: 32900000, guid: 76792e3d200b3f6478024c3998619c08, type: 3}
-  - {fileID: 32900000, guid: 0e8a89ef41cc40c4cbdf3f5fa2bb4fb0, type: 3}
+  - {fileID: 32900000, guid: 4bb1b0ca22a078b4784811b0a18981d5, type: 3}
 --- !u!114 &114688583882370378
 MonoBehaviour:
   m_ObjectHideFlags: 1
