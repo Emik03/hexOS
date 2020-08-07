@@ -15,9 +15,8 @@ MonoBehaviour:
   title: hexOS
   author: Emik
   description: "\"...I am going to throw myself into the sea. I will float there until
-    I am ready to go home.\"\n\nInspired by Hexyl, an original character by Spartan
-    (https://steamcommunity.com/id/spartan_SM)\n\nmoduleId: hexOS\n\nHTML Manual (eventually):
-    https://ktane.timwi.de/HTML/hexOS.html\n\nTemporary PDF Manual:\nhttps://github.com/Emik03/hexOS/blob/master/Manual/pdfs/Modules/hexOS%20%E2%80%94%20Keep%20Talking%20and%20Nobody%20Explodes%20Module.pdf\n\nTwitch
+    I am ready to go home.\"\n\nInspired by Hexyl, an original character by Spartan.
+    https://steamcommunity.com/id/spartan_SM\n\nmoduleId: hexOS\n\nHTML Manual: https://ktane.timwi.de/HTML/hexOS.html\n\nTwitch
     Plays is supported.\r\n\r\nIs there a bug? Do you have a question? Discord: @Emik#0001"
   version: 1.1
   outputFolder: D:\Steam\steamapps\common\Keep Talking and Nobody Explodes\mods

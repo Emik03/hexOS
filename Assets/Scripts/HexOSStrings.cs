@@ -3,6 +3,7 @@ using UnityEngine;
 
 sealed class HexOSStrings
 {
+    #region Color32
     public static readonly Color32[] PerfectColors = new Color32[3]
     {
         Color.black,
@@ -17,7 +18,9 @@ sealed class HexOSStrings
         new Color32(0, 0, 255, 128),
         new Color32(255, 255, 255, 128)
     };
+    #endregion
 
+    #region Alphabet
     public static readonly sbyte[] Symbols = new sbyte[12]
     {
         1, // C
@@ -95,8 +98,9 @@ sealed class HexOSStrings
         { 25, 'Y' },
         { 26, 'Z' }
     };
+    #endregion
 
-
+    #region String Arrays
     public static readonly string[] Notes = new string[16]
     {
         "X-XXX-X-X-X-X---X---X-X-X---X---X-X-X",
@@ -192,4 +196,5 @@ sealed class HexOSStrings
         "the fuck is a rotom",
         "hexyl you focusing\npiece of shit.\ni hope you have\na nice life and\nget married",
     };
+    #endregion
 }
