@@ -538,6 +538,7 @@ public class HexOS : MonoBehaviour
         Foreground.material.SetColor("_Color", Color.blue);
 
         // Start it up again.
+        Debug.LogFormat("[hexOS #{0}]: octOS Struck! Reverting back to hexOS...", _moduleId);
         _octAnimating = false;
         StartCoroutine(UpdateScreen());
         Module.HandleStrike();
@@ -1080,8 +1081,9 @@ public class HexOS : MonoBehaviour
             for (byte j = 0; j < 3; j++)
                 screen += temp[j, i];
 
-        // Thumbnail.
-        //screen = "420420420420420420420420420420";
+        // Testing various numbers on octOS. !PANIC
+        //screen = "874243369655992010486528737101";
+        //bitSum = new sbyte[4] { 2, 0, 1, 3 };
 
         Debug.LogFormat("[hexOS #{0}]: The screen displays the number {1}.", _moduleId, screen);
 
@@ -1145,64 +1147,41 @@ public class HexOS : MonoBehaviour
             switch (gamma[i])
             {
                 case '0': operand = (byte)Math.Min(bitSum[0], bitSum[1]); break; // AND
+
                 case '1': operand = (byte)Math.Max(bitSum[0], bitSum[1]); break; // OR
+
                 case '2': operand = (byte)(4 - Math.Min(bitSum[0], bitSum[1])); break; // NAND
+
                 case '3': operand = (byte)(4 - Math.Max(bitSum[0], bitSum[1])); break; // NOR
 
-                case '4': // XAND
-                    if (bitSum[0] <= 1 && bitSum[1] <= 1)
-                        operand = (byte)Math.Min(bitSum[0], bitSum[1]);
-                    else if (bitSum[0] >= 3 && bitSum[1] >= 3)
-                        operand = (byte)Math.Max(bitSum[0], bitSum[1]);
-                    else
-                        operand = 2;
-                    break;
+                case '4': operand = bitSum[0] <= 1 && bitSum[1] <= 1 ? (byte)Math.Max(bitSum[0], bitSum[1]) : // XAND
+                                    bitSum[0] >= 3 && bitSum[1] >= 3 ? (byte)Math.Min(bitSum[0], bitSum[1]) : (byte)2; break;
 
-                case '5': // XOR
-                    if (bitSum[0] <= 1 && bitSum[1] <= 1)
-                        operand = (byte)Math.Min(bitSum[0], bitSum[1]);
-                    else if (bitSum[0] >= 3 && bitSum[1] >= 3)
-                        operand = (byte)(4 - Math.Max(bitSum[0], bitSum[1]));
-                    else if (bitSum[0] <= 1 && bitSum[1] >= 3)
-                        operand = (byte)Math.Max(4 - bitSum[0], bitSum[1]);
-                    else if (bitSum[0] >= 3 && bitSum[1] <= 1)
-                        operand = (byte)Math.Max(bitSum[0], 4 - bitSum[1]);
-                    else
-                        operand = 2;
-                    break;
+                case '5': operand = bitSum[0] <= 1 && bitSum[1] <= 1 ? (byte)Math.Max(bitSum[0], bitSum[1]) : // XOR
+                                    bitSum[0] >= 3 && bitSum[1] >= 3 ? (byte)(4 - Math.Min(bitSum[0], bitSum[1])) :
+                                    bitSum[0] <= 1 && bitSum[1] >= 3 ? (byte)Math.Min(4 - bitSum[0], bitSum[1]) :
+                                    bitSum[0] >= 3 && bitSum[1] <= 1 ? (byte)Math.Min(bitSum[0], 4 - bitSum[1]) : (byte)2; break;
 
                 case '6': operand = (byte)Mathf.Clamp(bitSum[0] - bitSum[1] + 2, 0, 4); break; // COMPARISON
+
                 case '7': operand = (byte)Math.Max(4 - bitSum[0], bitSum[1]); break; // GULLIBILITY
+
                 case '8': operand = (bitSum[0] % 2 == 1 && bitSum[1] == 2) || (bitSum[0] % 4 == 0 && bitSum[1] % 4 != 0) ? (byte)bitSum[0] : (byte)bitSum[1]; break; // A=2 THEN B
 
-                case '9': // NA THEN NB
-                    if (bitSum[0] % 4 == 0 && bitSum[1] % 4 == 0 && bitSum[0] == bitSum[1])
-                        operand = 4;
-                    else if ((bitSum[0] == 1 && bitSum[1] <= 1) || (bitSum[0] == 3 && bitSum[1] >= 3))
-                        operand = 3;
-                    else if (bitSum[0] == 2)
-                        operand = 2;
-                    else if ((bitSum[0] == 1 && bitSum[1] >= 2) || (bitSum[0] == 3 && bitSum[1] <= 2))
-                        operand = 1;
-                    else
-                        operand = 0;
-                    break;
+                case '9': operand = bitSum[0] % 4 == 0 && bitSum[1] % 4 == 0 && bitSum[0] == bitSum[1] ? (byte)4 : // NA THEN NB
+                                    (bitSum[0] == 1 && bitSum[1] <= 1) || (bitSum[0] == 3 && bitSum[1] >= 3) ? (byte)3 :
+                                    bitSum[0] == 2 ? (byte)2 :
+                                    (bitSum[0] == 1 && bitSum[1] >= 2) || (bitSum[0] == 3 && bitSum[1] <= 2) ? (byte)1 : (byte)0; break;
 
                 case '+': operand = (byte)((bitSum[0] + bitSum[1]) % 5); break; // SUM
-                case '*': operand = (byte)((bitSum[0] * bitSum[1]) % 5); break; // PRODUCT
 
-                case '>': // IMPLIES
-                    if (bitSum[0] == 3)
-                        operand = bitSum[1] == 4 ? (byte)1 : (byte)(bitSum[1] + 1);
-                    else
-                        operand = (byte)(4 - (Convert.ToByte(bitSum[1] % Mathf.Pow(2, bitSum[0]) == 0) * bitSum[0]));
-                    break;
+                case '*': operand = (byte)(bitSum[0] * bitSum[1] % 5); break; // PRODUCT
+
+                case '>': operand = bitSum[0] == 3 ? (byte)((bitSum[1] % 4) + 1) : bitSum[0] == 4 && bitSum[1] == 4 ? (byte)4 : (byte)(4 - (bitSum[0] * Convert.ToByte(bitSum[1] % Mathf.Pow(2, bitSum[0]) < Mathf.Pow(2, bitSum[0]) / 2))); break; // IMPLIES
 
                 case '=': // EQUALITY
-                    operand = 4;
-                    if (bitSum[0] / 4 != bitSum[1] / 4)
-                        operand = 0;
-                    else
+                    operand = bitSum[0] / 4 != bitSum[1] / 4 ? (byte)0 : (byte)4;
+                    if (operand == 0)
                     {
                         if (bitSum[0] % 2 != bitSum[1] % 2)
                             operand -= 1;
@@ -1493,8 +1472,12 @@ public class HexOS : MonoBehaviour
         {
             yield return null;
 
+            // Is animating
+            if (_octAnimating)
+                yield return "sendtochaterror The module is currently unable to be interacted with!";
+
             // Sequence is already playing.
-            if (_playSequence)
+            else if (_playSequence)
                 yield return "sendtochaterror The sequence is already being played! Wait until the sequence is over!";
 
             // This command is valid, play sequence.
@@ -1510,8 +1493,12 @@ public class HexOS : MonoBehaviour
         {
             yield return null;
 
+            // Is animating
+            if (_octAnimating)
+                yield return "sendtochaterror The module is currently unable to be interacted with!";
+
             // No number.
-            if (user.Length < 2)
+            else if (user.Length < 2)
                 yield return "sendtochaterror A number must be specified! (Valid: 0-999)";
 
             // More than one number.
