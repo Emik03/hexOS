@@ -334,7 +334,6 @@ public class HexOS : MonoBehaviour
                 {
                     Debug.LogFormat("[hexOS #{0}]: The number submitted ({1}) did not match the expected answer ({2}), that's a strike!", _moduleId, _user, _answer);
                     _user = "";
-                    _press = -1;
 
                     if (!_octOS)
                     {
@@ -424,10 +423,6 @@ public class HexOS : MonoBehaviour
         solvedInOctOS = true;
         yield return new WaitForEndOfFrame();
 
-        // Prevents the text from updating.
-        StopCoroutine(UpdateScreen());
-        StopCoroutine(OctPlaySequence());
-
         // Sets the background and foreground to be white in case if the video animation is slightly delayed.
         Background.material.SetColor("_Color", HexOSStrings.TransparentColors[3]);
         Foreground.material.SetColor("_Color", Color.white);
@@ -455,6 +450,7 @@ public class HexOS : MonoBehaviour
         Debug.LogFormat("[hexOS #{0}]: The correct number for octOS was submitted, module solved! +24 additional points!", _moduleId);
         isSolved = true;
         Module.HandlePass();
+
         StopAllCoroutines();
     }
 
@@ -465,10 +461,6 @@ public class HexOS : MonoBehaviour
     {
         _octAnimating = true;
         yield return new WaitForEndOfFrame();
-
-        // Prevents the text from updating.
-        StopCoroutine(UpdateScreen());
-        StopCoroutine(OctPlaySequence());
 
         // Resets all strings.
         UserNumber.text = "";
@@ -561,6 +553,10 @@ public class HexOS : MonoBehaviour
         // While not solved, cycle through 30 digit number.
         while (!isSolved)
         {
+            // Stop routine if octOS is currently playing a video.
+            if (_octAnimating)
+                yield break;
+
             // If in last index, put a pause and restart loop.
             if (index >= screen.Length)
             {
@@ -635,7 +631,10 @@ public class HexOS : MonoBehaviour
 
             // Render color, but only half as often as the rhythms.
             for (byte j = 0; j < Ciphers.Length; j++)
+            {
                 Ciphers[j].material.color = HexOSStrings.PerfectColors[seqs[j][i / 2]];
+                Ciphers[j].material.mainTexture = null;
+            }
 
             // If it's the last index, emphasise it with percussion.
             if (i == HexOSStrings.Notes[_press].Length - 1)
@@ -706,6 +705,10 @@ public class HexOS : MonoBehaviour
 
         for (byte i = 0; i < HexOSStrings.OctNotes[_press].Length; i++)
         {
+            // Stop routine if octOS is currently playing a video.
+            if (_octAnimating)
+                yield break;
+
             // Look through the sequence of rhythms, if a note should be playing, play note.
             if (HexOSStrings.OctNotes[_octRhythms[_press % 2]][i] == 'X')
             {
@@ -736,7 +739,7 @@ public class HexOS : MonoBehaviour
             // Create the amount of dots corresponding to which group it is cycling through.
             GroupCounter.text = "";
             for (byte k = 0; k <= i / 17; k++)
-                GroupCounter.text += '.';
+                GroupCounter.text += _press % 2 == 0 ? '.' : ':';
 
             // 60 / 1140 (190bpm * 6beat)
             yield return new WaitForSeconds(0.0526315789474f);
@@ -1215,14 +1218,14 @@ public class HexOS : MonoBehaviour
             if (bitSum[1] == operand) // If second and fourth operand are the same, find earliest unique number.
             {
                 if (notGate) // Searches forward for smallest unique number.
-                    for (byte j = 0; j <= 4; j++)
-                        for (byte k = 0; j < bitSum.Length; j++)
+                    for (sbyte j = 0; j <= 4; j++)
+                        for (byte k = 0; k < bitSum.Length; k++)
                         {
                             if (bitSum[k] == j)
                                 break;
                             if (k == bitSum.Length - 1)
                             {
-                                operand = j;
+                                operand = (byte)j;
                                 goto foundNumber;
                             }
                         }
@@ -1262,7 +1265,7 @@ public class HexOS : MonoBehaviour
             }
         }
 
-        Debug.LogFormat("[hexOS #{0}]: 4-bits = {1}.", _moduleId, sumLog);
+        Debug.LogFormat("[hexOS #{0}]: 4-bits after applying operands = {1}.", _moduleId, sumLog);
         Debug.LogFormat("[hexOS #{0}]: δ = {1}.", _moduleId, delta);
 
         // Calculates the digital root.
