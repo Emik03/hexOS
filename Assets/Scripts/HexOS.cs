@@ -1180,8 +1180,8 @@ public class HexOS : MonoBehaviour
                 case '>': operand = bitSum[0] == 3 ? (byte)((bitSum[1] % 4) + 1) : bitSum[0] == 4 && bitSum[1] == 4 ? (byte)4 : (byte)(4 - (bitSum[0] * Convert.ToByte(bitSum[1] % Mathf.Pow(2, bitSum[0]) < Mathf.Pow(2, bitSum[0]) / 2))); break; // IMPLIES
 
                 case '=': // EQUALITY
-                    operand = bitSum[0] / 4 != bitSum[1] / 4 ? (byte)0 : (byte)4;
-                    if (operand == 0)
+                    operand = (bitSum[0] == 4 || bitSum[1] == 4) && bitSum[0] != bitSum[1] ? (byte)0 : (byte)4;
+                    if (operand == 4)
                     {
                         if (bitSum[0] % 2 != bitSum[1] % 2)
                             operand -= 1;
@@ -1558,7 +1558,7 @@ public class HexOS : MonoBehaviour
         // Get the correct answer.
         string solve = _octOS ? _octAnswer : _answer;
 
-        Debug.LogFormat("[hexOS #{0}]: Admin has initiated autosolver. The module will now submit {1}.", _moduleId, solve);
+        Debug.LogFormat("[hexOS #{0}]: Autosolver initiated. The module will now submit {1}.", _moduleId, solve);
 
         // Cycle through each digit.
         for (byte i = 0; i < solve.Length; i++)
