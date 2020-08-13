@@ -1275,6 +1275,10 @@
 							<td style="background-color: #99ff99;">+</td>
                         </tr>				
                     </table>
+					
+					<h3 style="text-align: right;">Sequence Addition</h3>
+					<p style="text-align: right;">The screen cycles a 30-digit number, with a pause indicating the end. Write down the entire sequence. Add each individual digit with the <strong>offset</strong>. Apply the digital root* if any exceed 9.</p>
+						
                 </div>
                 <div class="page-footer relative-footer">Page 2 of 3</div>
             </div>
@@ -1284,24 +1288,26 @@
                     <span class="page-header-section-title">hexOS</span>
                 </div>
                 <div class="page-content">
-                    <h3>Sequence Addition</h3>
+                    
+					<h4>Sequence Modification</h4>
 					<ul>
-						<li>The screen cycles through a 30-digit number, with a pause indicating the end of it. Write down the entire sequence. Modify every digit by adding each individual digit with the <strong>offset</strong>. Apply the digital root* if any exceed 9.</li>
-						<h4>Sequence Modification</h4>
+						<li>If the length of the sequence isn't divisible by 6... </li>
 						<ul>
-							<li>Split the sequence in groups of 6. Add the left half of each group with the right half. Link all sums from left to right into one big number.</li>
-							<br>
-							<li>If groups of 6 can no longer be formed: Remove the 1-5 rightmost digits and make a new sequence of itself repeating. Add both sequences' individual digits. If any digit exceed 9, apply the digital root*.</li>
-							<br>
-							<li>Repeat <strong>Sequence Modification</strong> until it is less than 6 digits long.</li>
+							<li>Cut the rightmost digits until the original sequence length is divisible by 6, and paste them in a new sequence.</li>
+							</br>
+							<li>Make the new as long as the other one by repeating its own digits.</li>
+							</br>
+							<li>Add both sequences' individual digits. If any digit exceed 9, apply the digital root*.</li>
 						</ul>
-						<li>Remove the leftmost digits until the sequence is 3 digits long.</li>
+						<li>Split the sequence in groups of 6. Add the left half of each group with the right half. Link all sums from left to right into one big number.</li>
+						<br>
+						<li>Repeat <strong>Sequence Modification</strong> until it is less than 6 digits long.</li>
 					</ul>
 					<p style="font-style: italic">*Digital Root: Adding up all digits individually until one number is formed. Example: 555 = 5+5+5 = 15 = 1+5 = 6.</p>
 					
 					<h3>Submitting</h3>
 					<ul>
-						<li>Holding the screen stores the number in the top-right. Releasing the screen submits the earliest unfilled position with the stored number's digit in the same position. Continuing to hold cancels the submission.</li>
+						<li>Holding the screen stores the number in the top-right. Releasing the screen submits the earliest unfilled position with the stored number's digit in the same position. Continuing to hold cancels the current submission. Holding and submitting the pause will clear the submission.</li>
 						<ul>
 							<li>Hold and release the screen when the <strong>leftmost</strong> digit of the 3-digit number matches the <strong>leftmost</strong> digit on the module.</li>
 							<br>

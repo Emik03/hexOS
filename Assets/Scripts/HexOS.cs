@@ -279,9 +279,8 @@ public class HexOS : MonoBehaviour
             // Reset holding.
             _held = 0;
 
-            // Add digit to user input only if the number exists.
-            if (_submit[0] != ' ')
-                _user += _submit[_user.Length];
+            // Add digit to user input if the number exists, otherwise clear it.
+            _user = _submit != "   " ? _user + _submit[_user.Length] : "";
 
             // If the user input has 3 inputs, check for answer.
             if (_user.Length == 3)
@@ -332,7 +331,7 @@ public class HexOS : MonoBehaviour
                 // Otherwise, strike and reset the user input.
                 else
                 {
-                    Debug.LogFormat("[hexOS #{0}]: The number submitted ({1}) did not match the expected answer ({2}), that's a strike!", _moduleId, _user, _answer);
+                    Debug.LogFormat("[hexOS #{0}]: The number submitted ({1}) did not match the expected answer ({2}), that's a strike!", _moduleId, _user, _octOS ? _octAnswer : _answer);
                     _user = "";
 
                     if (!_octOS)
@@ -369,6 +368,7 @@ public class HexOS : MonoBehaviour
         // Typical module handle pass.
         Background.material.SetColor("_Color", HexOSStrings.TransparentColors[1]);
         Foreground.material.SetColor("_Color", Color.green);
+        Button.AddInteractionPunch(20);
         isSolved = true;
         Status.text = "Boot Manager\nUnlocked!";
         Debug.LogFormat("[hexOS #{0}]: The correct number was submitted, module solved!", _moduleId);
@@ -433,7 +433,7 @@ public class HexOS : MonoBehaviour
         Status.text = "";
 
         // Gives powerful emphasis.
-        Button.AddInteractionPunch(25);
+        Button.AddInteractionPunch(50);
 
         // Plays the solve animation.
         VideoOct.transform.localPosition = new Vector3(0, 0.84f, 0);
@@ -585,29 +585,21 @@ public class HexOS : MonoBehaviour
         // Prevent button presses from playing the sequence when it's already being played.
         _playSequence = true;
 
-        byte[] seq1 = new byte[19], seq2 = new byte[19], seq3 = new byte[19];
-
-        // Allow for easy access to all three via indexes.
-        byte[][] seqs = new byte[3][] { seq1, seq2, seq3 };
+        byte[,] seqs = new byte[3, 19];
 
         // Establish colors to be displayed for each tile, 0 = black, 1 = white, 2 = magenta.
         for (byte i = 0; i < _flashOtherColors - _hexOSStrikes; i++)
             // For each color.
             for (byte j = 0; j < 3; j++)
                 // For each sequence variable.
-                for (byte k = 0; k < seqs.Length; k++)
-                    seqs[k][(i * 3) + j] = j;
+                for (byte k = 0; k < seqs.GetLength(0); k++)
+                    seqs[k, (i * 3) + j] = j;
 
         // Fill in remaining slots.
-        for (byte i = (byte)Math.Max(3 * (_flashOtherColors - _hexOSStrikes), 0); i < seq1.Length; i++)
+        for (byte i = (byte)Math.Max(3 * (_flashOtherColors - _hexOSStrikes), 0); i < seqs.GetLength(1); i++)
             // For each sequence variable.
-            for (byte j = 0; j < seqs.Length; j++)
-                seqs[j][i] = _ciphers[(_press % 2 * 3) + j];
-
-        // Shuffle it for ambiguity.
-        seq1.Shuffle();
-        seq2.Shuffle();
-        seq3.Shuffle();
+            for (byte j = 0; j < seqs.GetLength(0); j++)
+                seqs[j, i] = _ciphers[(_press % 2 * 3) + j];
 
         if (Status.text != "Boot Manager\nSaving " + _submit + "...")
             Status.text = "Boot Manager\nPlaying...";
@@ -616,41 +608,61 @@ public class HexOS : MonoBehaviour
         for (byte i = 0; i < Ciphers.Length; i++)
             Ciphers[i].transform.localPosition = new Vector3(Ciphers[i].transform.localPosition.x, 0.21f, Ciphers[i].transform.localPosition.z);
 
-        for (byte i = 0; i < HexOSStrings.Notes[_press].Length; i++)
-        {
-            // At least 2 strikes, start playing hi-hat.
-            if (_delayPerBeat + (_hexOSStrikes / 20) > 0.2f)
+        // Cache results for operations in use for later calculations.
+        float delay = Math.Min(_delayPerBeat + (_hexOSStrikes / 20), 1);
+        bool hihat = delay > 0.2f;
+        
+        // Display the colors at the same time as the rhythms, which have different timings.
+        StartCoroutine(HexDisplayColors(seqs));
+
+        // If true, this returns a coroutine in a fixed speed which may cause a bit of lag.
+        // This is necessary because the hihat plays every tick.
+        if (hihat)
+            for (byte i = 0; i < HexOSStrings.Notes[_press].Length; i++)
+            {
+                // At least 2 strikes, start playing hi-hat.
                 Audio.PlaySoundAtTransform("hihat", Module.transform);
 
-            // Look through the sequence of rhythms, if a note should be playing, play note.
-            if (HexOSStrings.Notes[_rhythms[_press % 2]][i] == 'X')
+                // Look through the sequence of rhythms, if a note should be playing, play note.
+                if (HexOSStrings.Notes[_rhythms[_press % 2]][i] == 'X')
+                {
+                    Audio.PlaySoundAtTransform("chord" + (_press + 1), Module.transform);
+                    if (_experimentalShake)
+                        Button.AddInteractionPunch();
+                }
+
+                yield return new WaitForSeconds(delay);
+            }
+
+        // If false, this returns a coroutine based on a linear search which makes delays more accurate.
+        // This is necessary because Unity isn't accurate with small amounts of WaitForSeconds().
+        else
+            for (byte i = 0; i < HexOSStrings.Notes[_press].Length - 1; i += 0)
             {
-                Audio.PlaySoundAtTransform("chord" + (_press + 1 + (Convert.ToByte(_octOS) * 8)), Module.transform);
+                // Play note.
+                Audio.PlaySoundAtTransform("chord" + (_press + 1), Module.transform);
                 if (_experimentalShake)
                     Button.AddInteractionPunch();
+
+                // Temporarily store the variable 'i'.
+                byte temp = i;
+
+                // Calculate ahead the delay between the next note.
+                for (i++; i < HexOSStrings.Notes[_press].Length - 1; i++)
+                    if (HexOSStrings.Notes[_rhythms[_press % 2]][i] == 'X')
+                        break;
+
+                yield return new WaitForSeconds((i - temp) * delay);
             }
 
-            // Render color, but only half as often as the rhythms.
-            for (byte j = 0; j < Ciphers.Length; j++)
-            {
-                Ciphers[j].material.color = HexOSStrings.PerfectColors[seqs[j][i / 2]];
-                Ciphers[j].material.mainTexture = null;
-            }
+        // Play one last note, with emphasis on percussion.
+        Audio.PlaySoundAtTransform("chord" + (_press + 1), Module.transform);
+        Audio.PlaySoundAtTransform("clap", Module.transform);
+        if (_experimentalShake)
+            Button.AddInteractionPunch(10);
 
-            // If it's the last index, emphasise it with percussion.
-            if (i == HexOSStrings.Notes[_press].Length - 1)
-            {
-                Audio.PlaySoundAtTransform("clap", Module.transform);
-
-                if (_experimentalShake)
-                    Button.AddInteractionPunch(10);
-
-                if (Status.text != "Boot Manager\nStoring " + _submit + "...")
-                    Status.text = "Boot Manager\nLoading...";
-            }
-
-            yield return new WaitForSeconds(Math.Min(_delayPerBeat + (_hexOSStrikes / 20), 1));
-        }
+        if (Status.text != "Boot Manager\nStoring " + _submit + "...")
+            Status.text = "Boot Manager\nLoading...";
 
         // Hide ciphers.
         for (byte j = 0; j < Ciphers.Length; j++)
@@ -683,71 +695,57 @@ public class HexOS : MonoBehaviour
         for (byte i = 0; i < Ciphers.Length; i++)
             Ciphers[i].transform.localPosition = new Vector3(Ciphers[i].transform.localPosition.x, 0.21f, Ciphers[i].transform.localPosition.z);
 
-        byte[,] seq = new byte[18, 9];
+        byte[,] seqs = new byte[18, 9];
 
         // Array initializer.
-        for (byte i = 0; i < seq.GetLength(0); i++)
+        for (byte i = 0; i < seqs.GetLength(0); i++)
         {
             // Fills in distracting lights.
             for (byte j = 0; j < 6; j++)
-                seq[i, j] = (byte)(j / 2 * 12);
+                seqs[i, j] = (byte)(j / 2 * 12);
 
             // ULTRA-CRUEL VARIANT (literally unplayable garbage, don't use this)
             // Fills in 1 with incorrect color.
             //seq[i, 7] = (byte)(12 * (_octColors[i] + 1) % 3);
 
             // Fills remainder with "true" colors.
-            for (byte j = 6; j < seq.GetLength(1); j++)
-                seq[i, j] = (byte)(12 * _octColors[i]);
+            for (byte j = 6; j < seqs.GetLength(1); j++)
+                seqs[i, j] = (byte)(12 * _octColors[i]);
         }
 
-        // Shuffles the sequence.
-        Shuffle(seq);
-
-        for (byte i = 0; i < HexOSStrings.OctNotes[_press].Length; i++)
+        // Display the colors at the same time as the rhythms, which have different timings.
+        StartCoroutine(OctDisplayColors(seqs));
+        
+        for (byte i = 0; i < HexOSStrings.OctNotes[_press].Length; i += 0)
         {
             // Stop routine if octOS is currently playing a video.
             if (_octAnimating)
                 yield break;
 
-            // Look through the sequence of rhythms, if a note should be playing, play note.
-            if (HexOSStrings.OctNotes[_octRhythms[_press % 2]][i] == 'X')
-            {
-                Audio.PlaySoundAtTransform("chord" + (_press + 1 + (Convert.ToByte(_octOS) * 8)), Module.transform);
-                if (_experimentalShake)
-                    Button.AddInteractionPunch();
-            }
+            Audio.PlaySoundAtTransform("chord" + (_press + 9), Module.transform);
+            if (_experimentalShake)
+                Button.AddInteractionPunch();
 
-            // Render color.
-            for (byte j = 0; j < Ciphers.Length; j++)
-            {
-                Ciphers[j].material.color = Color.white;
-                Ciphers[j].material.mainTexture = FrequencyTextures[seq[j + (i / 17 * 3) + (_press % 2 * 9), i % 17 / 2] + _octSymbols[j + (i / 17 * 3) + (_press % 2 * 9)]];
-            }
+            // Temporarily store the variable 'i'.
+            byte temp = i;
 
-            // If it's the last index, emphasise it with percussion.
-            if (i == HexOSStrings.OctNotes[_press].Length - 1)
-            {
-                Audio.PlaySoundAtTransform("clap", Module.transform);
-
-                if (_experimentalShake)
-                    Button.AddInteractionPunch(10);
-
-                if (Status.text != "Boot Manager\nStoring " + _submit + "...")
-                    Status.text = "Boot Manager\nLoading...";
-            }
-
-            // Create the amount of dots corresponding to which group it is cycling through.
-            GroupCounter.text = "";
-            for (byte k = 0; k <= i / 17; k++)
-                GroupCounter.text += _press % 2 == 0 ? '.' : ':';
+            // Calculate ahead the delay between the next note.
+            for (i++; i < HexOSStrings.Notes[_press].Length - 1; i++)
+                if (HexOSStrings.Notes[_octRhythms[_press % 2]][i] == 'X')
+                    break;
 
             // 60 / 1140 (190bpm * 6beat)
-            yield return new WaitForSeconds(0.0526315789474f);
+            yield return new WaitForSeconds((i - temp) * 0.0526315789474f);
         }
 
-        // Reset text.
-        GroupCounter.text = "";
+        // Play one last note, with emphasis on percussion.
+        Audio.PlaySoundAtTransform("chord" + (_press + 9), Module.transform);
+        Audio.PlaySoundAtTransform("clap", Module.transform);
+        if (_experimentalShake)
+            Button.AddInteractionPunch(10);
+
+        if (Status.text != "Boot Manager\nStoring " + _submit + "...")
+            Status.text = "Boot Manager\nLoading...";
 
         // Turn back to black.
         for (byte j = 0; j < Ciphers.Length; j++)
@@ -764,6 +762,56 @@ public class HexOS : MonoBehaviour
 
         // Allow button presses.
         _playSequence = false;
+    }
+
+    private IEnumerator HexDisplayColors(byte[,] seqs)
+    {
+        // Reset textures from octOS.
+        for (byte j = 0; j < Ciphers.Length; j++)
+            Ciphers[j].material.mainTexture = null;
+
+        // Shuffle it for ambiguity.
+        Shuffle(seqs);
+
+        for (byte i = 0; i < HexOSStrings.Notes[_press].Length; i++)
+        {
+            // Render color, but only half as often as the rhythms.
+            for (byte j = 0; j < Ciphers.Length; j++)
+                Ciphers[j].material.color = HexOSStrings.PerfectColors[seqs[j, i / 2]];
+
+            yield return new WaitForSeconds(Math.Min(_delayPerBeat + (_hexOSStrikes / 20), 1));
+        }
+    }
+
+    private IEnumerator OctDisplayColors(byte[,] seqs)
+    {
+        // Reset colors from hexOS.
+        for (byte j = 0; j < Ciphers.Length; j++)
+            Ciphers[j].material.color = Color.white;
+
+        // Shuffle it for ambiguity.
+        Shuffle(seqs);
+
+        for (byte i = 0; i < HexOSStrings.OctNotes[_press].Length; i++)
+        {
+            // Stop routine if octOS is currently playing a video.
+            if (_octAnimating)
+                yield break;
+
+            // Render texture, but only half as often as the rhythms.
+            for (byte j = 0; j < Ciphers.Length; j++)
+                Ciphers[j].material.mainTexture = FrequencyTextures[seqs[j + (i / 17 * 3) + (_press % 2 * 9), i % 17 / 2] + _octSymbols[j + (i / 17 * 3) + (_press % 2 * 9)]];
+
+            // Create the amount of dots corresponding to which group it is cycling through.
+            GroupCounter.text = "";
+            for (byte k = 0; k <= i / 17; k++)
+                GroupCounter.text += _press % 2 == 0 ? '.' : ':';
+
+            // 60 / 1140 (190bpm * 6beat)
+            yield return new WaitForSeconds(0.0526315789474f);
+        }
+
+        GroupCounter.text = "";
     }
     #endregion
 
@@ -1164,7 +1212,7 @@ public class HexOS : MonoBehaviour
 
                 case '6': operand = (byte)Mathf.Clamp(bitSum[0] - bitSum[1] + 2, 0, 4); break; // COMPARISON
 
-                case '7': operand = (byte)Math.Max(4 - bitSum[0], bitSum[1]); break; // GULLIBILITY
+                case '7': operand = (byte)Mathf.Clamp(bitSum[0] + bitSum[1] - 2, 0, 4); break; // GULLIBILITY
 
                 case '8': operand = (bitSum[0] % 2 == 1 && bitSum[1] == 2) || (bitSum[0] % 4 == 0 && bitSum[1] % 4 != 0) ? (byte)bitSum[0] : (byte)bitSum[1]; break; // A=2 THEN B
 
