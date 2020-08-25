@@ -637,7 +637,7 @@ public class HexOS : MonoBehaviour
         // If false, this returns a coroutine based on a linear search which makes delays more accurate.
         // This is necessary because Unity isn't accurate with small amounts of WaitForSeconds().
         else
-            for (byte i = 0; i < HexOSStrings.Notes[_press].Length - 1; i += 0)
+            for (byte i = 0; i < HexOSStrings.Notes[_rhythms[_press % 2]].Length - 1; i += 0)
             {
                 // Play note.
                 Audio.PlaySoundAtTransform("chord" + (_press + 1), Module.transform);
@@ -648,7 +648,7 @@ public class HexOS : MonoBehaviour
                 byte temp = i;
 
                 // Calculate ahead the delay between the next note.
-                for (i++; i < HexOSStrings.Notes[_press].Length - 1; i++)
+                for (i++; i < HexOSStrings.Notes[_rhythms[_press % 2]].Length - 1; i++)
                     if (HexOSStrings.Notes[_rhythms[_press % 2]][i] == 'X')
                         break;
 
@@ -716,7 +716,7 @@ public class HexOS : MonoBehaviour
         // Display the colors at the same time as the rhythms, which have different timings.
         StartCoroutine(OctDisplayColors(seqs));
         
-        for (byte i = 0; i < HexOSStrings.OctNotes[_press].Length; i += 0)
+        for (byte i = 0; i < HexOSStrings.OctNotes[_octRhythms[_press % 2]].Length; i += 0)
         {
             // Stop routine if octOS is currently playing a video.
             if (_octAnimating)
@@ -730,8 +730,8 @@ public class HexOS : MonoBehaviour
             byte temp = i;
 
             // Calculate ahead the delay between the next note.
-            for (i++; i < HexOSStrings.Notes[_press].Length - 1; i++)
-                if (HexOSStrings.Notes[_octRhythms[_press % 2]][i] == 'X')
+            for (i++; i < HexOSStrings.OctNotes[_octRhythms[_press % 2]].Length - 1; i++)
+                if (HexOSStrings.OctNotes[_octRhythms[_press % 2]][i] == 'X')
                     break;
 
             // 60 / 1140 (190bpm * 6beat)
@@ -1098,8 +1098,8 @@ public class HexOS : MonoBehaviour
         byte keyIndex = 0;
 
         // Finds the first instance of the phrase.
-        for (byte i = 0; i < HexOSStrings.OctPhrases.Length; i++)
-            for (byte j = 0; j < HexOSStrings.OctPhrases[i].Length - 5; j++)
+        for (byte i = 0; i < HexOSStrings.OctPhrases.Length && keyIndex == 0; i++)
+            for (byte j = 0; j < HexOSStrings.OctPhrases[i].Length - 5 && keyIndex == 0; j++)
             {
                 string comparison = HexOSStrings.OctPhrases[i].Substring(j, 6);
 
