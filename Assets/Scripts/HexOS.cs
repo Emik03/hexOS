@@ -38,6 +38,7 @@ public class HexOS : MonoBehaviour
     char[] decipher = new char[2];
     string sum = "", screen = "";
 
+    private System.Random _rnd;
     private static bool _forceAltSolve, _experimentalShake, _canBeOctOS;
     private bool _lightsOn, _octOS, _isHolding, _playSequence, _hasPlayedSequence, _octAnimating, _fastStrike;
     private static byte _flashOtherColors = 5;
@@ -46,7 +47,7 @@ public class HexOS : MonoBehaviour
     private readonly byte[] _rhythms = new byte[2], _ciphers = new byte[6], _octRhythms = new byte[2], _octSymbols = new byte[18];
     private readonly List<byte> _octColors = new List<byte>(0);
     private static int _moduleIdCounter = 1, _y = 0, _rotationSpeed;
-    private int _moduleId = 0;
+    private int _moduleId = 0, _amountOfTimesPressed = 0;
     private static float _delayPerBeat, _hexOSStrikes;
     private static string _customSolveQuote;
     private string _user = "", _answer = "", _octAnswer = "", _submit = "", _tempScreen, _tempSum;
@@ -117,6 +118,12 @@ public class HexOS : MonoBehaviour
         for (byte i = (byte)(2 * hideIndex); i < 2 + hideIndex; i++)
             Spinnables[i].transform.localPosition = new Vector3(Spinnables[i].transform.localPosition.x, Spinnables[i].transform.localPosition.y / 3, Spinnables[i].transform.localPosition.z / 2);
 
+        int seed = Rnd.Range(0, int.MaxValue);
+        _rnd = new System.Random(seed);
+        // SET YOUR SEED HERE IN CASE OF BUGS!!
+        // _rnd = new System.Random(1);
+        Debug.LogFormat("[hexOS #{0}] Entering dimension no. {1}x{2}!", _moduleId, HexOSStrings.Version, seed);
+
         // Start module.
         StartCoroutine(WaitForVideoClips());
     }
@@ -182,6 +189,9 @@ public class HexOS : MonoBehaviour
             _isHolding = false;
             _held = -1;
         }
+
+        if (_octOS && _amountOfTimesPressed > 18 && !_octAnimating && !_playSequence)
+            StartCoroutine(OctRegenerate());
     }
 
     /// <summary>
@@ -220,6 +230,8 @@ public class HexOS : MonoBehaviour
         Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Module.transform);
 
         Button.AddInteractionPunch(3);
+
+        _amountOfTimesPressed++;
 
         // Lights off, solved then it should end it here.
         if (!_lightsOn || isSolved || _octAnimating)
@@ -261,6 +273,8 @@ public class HexOS : MonoBehaviour
             // If the sequence isn't already playing, play it.
             if (!_playSequence)
             {
+                _amountOfTimesPressed = 0;
+
                 // Increment presses so that the correct chords and sequences are played.
                 _press = (sbyte)((_press + 1) % 8);
 
@@ -275,6 +289,7 @@ public class HexOS : MonoBehaviour
         else
         {
             Audio.PlaySoundAtTransform("submit", Module.transform);
+            _amountOfTimesPressed = 0;
 
             // Reset holding.
             _held = 0;
@@ -545,6 +560,75 @@ public class HexOS : MonoBehaviour
     }
 
     /// <summary>
+    /// Strikes the module in an animation for hard mode.
+    /// </summary>
+    private IEnumerator OctRegenerate()
+    {
+        _octAnimating = true;
+        yield return new WaitForEndOfFrame();
+
+        _amountOfTimesPressed = 0;
+
+        // Resets all strings.
+        UserNumber.text = "";
+        Number.text = "";
+        Status.text = "";
+
+        // Sets the background and foreground to be white in case if the video animation is slightly delayed.
+        Background.material.SetColor("_Color", HexOSStrings.TransparentColors[3]);
+        Foreground.material.SetColor("_Color", Color.white);
+
+        VideoOct.transform.localPosition = new Vector3(0, 0.84f, 0);
+        VideoRenderer.material.color = new Color32(255, 255, 255, 0);
+
+        VideoOct.clip = Application.isEditor ? Clips[3] : VideoLoader.clips[3];
+        VideoOct.Prepare();
+        VideoOct.Play();
+        Audio.PlaySoundAtTransform("octStrikeFast", Module.transform);
+        
+        // For reference, the audio clip is 11.85 seconds.
+        byte c = 0;
+        while (c != 255)
+        {
+            c++;
+            VideoRenderer.material.color = new Color32(255, 255, 255, c);
+            yield return new WaitForSeconds(0.04f);
+        }
+        yield return new WaitWhile(() => VideoOct.isPlaying);
+
+        VideoOct.transform.localPosition = new Vector3(0, -0.42f, 0);
+
+        // Reset back to hexOS, restoring all the values.
+        _octOS = false;
+        ModelName.text = "hexOS";
+        screen = _tempScreen;
+        sum = _tempSum;
+        UserNumber.text = "---";
+        Status.text = "Boot Manager\nWaiting...";
+
+        decipher = new char[2];
+        for (int i = 0; i < decipher.Length; i++)
+            _tempDecipher[i] = decipher[i];
+
+        Background.material.SetColor("_Color", HexOSStrings.TransparentColors[2]);
+        Foreground.material.SetColor("_Color", Color.blue);
+
+        Status.text = "Boot Manager\n...?";
+
+        _octOS = true;
+        _user = "";
+
+        Background.material.SetColor("_Color", HexOSStrings.TransparentColors[0]);
+        Foreground.material.SetColor("_Color", Color.red);
+
+        // Start it up again.
+        Debug.LogFormat("[hexOS #{0}]: octOS is being refreshed!", _moduleId);
+        _octAnimating = false;
+        OctGenerate();
+        Audio.PlaySoundAtTransform("octActivate", Module.transform);
+    }
+
+    /// <summary>
     /// Updates the screen every second to cycle all digits.
     /// </summary>
     private IEnumerator UpdateScreen()
@@ -716,7 +800,7 @@ public class HexOS : MonoBehaviour
         // Display the colors at the same time as the rhythms, which have different timings.
         StartCoroutine(OctDisplayColors(seqs));
         
-        for (byte i = 0; i < HexOSStrings.OctNotes[_octRhythms[_press % 2]].Length; i += 0)
+        for (byte i = 0; i < HexOSStrings.OctNotes[_octRhythms[_press % 2]].Length - 1; i += 0)
         {
             // Stop routine if octOS is currently playing a video.
             if (_octAnimating)
@@ -766,49 +850,51 @@ public class HexOS : MonoBehaviour
 
     private IEnumerator HexDisplayColors(byte[,] seqs)
     {
+        // Shuffle it for ambiguity.
+        Shuffle(seqs);
+
         // Reset textures from octOS.
         for (byte j = 0; j < Ciphers.Length; j++)
             Ciphers[j].material.mainTexture = null;
 
-        // Shuffle it for ambiguity.
-        Shuffle(seqs);
-
-        for (byte i = 0; i < HexOSStrings.Notes[_press].Length; i++)
+        for (byte i = 0; i < HexOSStrings.Notes[_press].Length; i += 2)
         {
             // Render color, but only half as often as the rhythms.
             for (byte j = 0; j < Ciphers.Length; j++)
                 Ciphers[j].material.color = HexOSStrings.PerfectColors[seqs[j, i / 2]];
 
-            yield return new WaitForSeconds(Math.Min(_delayPerBeat + (_hexOSStrikes / 20), 1));
+            yield return new WaitForSeconds(Math.Min(_delayPerBeat + (_hexOSStrikes / 20), 1) * 2);
         }
     }
 
     private IEnumerator OctDisplayColors(byte[,] seqs)
     {
+        // Shuffle it for ambiguity.
+        Shuffle(seqs);
+
         // Reset colors from hexOS.
         for (byte j = 0; j < Ciphers.Length; j++)
             Ciphers[j].material.color = Color.white;
 
-        // Shuffle it for ambiguity.
-        Shuffle(seqs);
+        const float delay = 0.0526315789474f * 2;
 
-        for (byte i = 0; i < HexOSStrings.OctNotes[_press].Length; i++)
+        for (byte i = 0; i < HexOSStrings.OctNotes[_press].Length; i += 2)
         {
             // Stop routine if octOS is currently playing a video.
             if (_octAnimating)
                 yield break;
-
-            // Render texture, but only half as often as the rhythms.
-            for (byte j = 0; j < Ciphers.Length; j++)
-                Ciphers[j].material.mainTexture = FrequencyTextures[seqs[j + (i / 17 * 3) + (_press % 2 * 9), i % 17 / 2] + _octSymbols[j + (i / 17 * 3) + (_press % 2 * 9)]];
 
             // Create the amount of dots corresponding to which group it is cycling through.
             GroupCounter.text = "";
             for (byte k = 0; k <= i / 17; k++)
                 GroupCounter.text += _press % 2 == 0 ? '.' : ':';
 
+            // Render texture, but only half as often as the rhythms.
+            for (byte j = 0; j < Ciphers.Length; j++)
+                Ciphers[j].material.mainTexture = FrequencyTextures[seqs[j + (i / 17 * 3) + (_press % 2 * 9), i % 17 / 2] + _octSymbols[j + (i / 17 * 3) + (_press % 2 * 9)]];
+
             // 60 / 1140 (190bpm * 6beat)
-            yield return new WaitForSeconds(0.0526315789474f);
+            yield return new WaitForSeconds(delay);
         }
 
         GroupCounter.text = "";
@@ -822,8 +908,8 @@ public class HexOS : MonoBehaviour
     private string HexGenerate()
     {
         // Generate random rhythm indexes, making sure that neither are the same.
-        _rhythms[0] = (byte)Rnd.Range(0, HexOSStrings.Notes.Length);
-        do _rhythms[1] = (byte)Rnd.Range(0, HexOSStrings.Notes.Length);
+        _rhythms[0] = (byte)_rnd.Next(0, HexOSStrings.Notes.Length);
+        do _rhythms[1] = (byte)_rnd.Next(0, HexOSStrings.Notes.Length);
         while (_rhythms[1] == _rhythms[0]);
 
         Debug.LogFormat("[hexOS #{0}]: The first rhythm sequence is {1}.", _moduleId, HexOSStrings.Notes[_rhythms[0]]);
@@ -831,7 +917,7 @@ public class HexOS : MonoBehaviour
 
         // Generate random ciphers.
         for (byte i = 0; i < _ciphers.Length; i++)
-            _ciphers[i] = (byte)Rnd.Range(0, 3);
+            _ciphers[i] = (byte)_rnd.Next(0, 3);
 
         string[] logColor = { "Black", "White", "Magenta" };
         Debug.LogFormat("[hexOS #{0}]: Perfect Cipher is {1}, {2}, {3}, and {4}, {5}, {6}.", _moduleId, logColor[_ciphers[0]], logColor[_ciphers[1]], logColor[_ciphers[2]], logColor[_ciphers[3]], logColor[_ciphers[4]], logColor[_ciphers[5]]);
@@ -1032,9 +1118,11 @@ public class HexOS : MonoBehaviour
         Debug.LogFormat("[hexOS #{0}]: octOS has been activated! Regenerating module...", _moduleId);
         ModelName.text = "octOS";
 
+        _amountOfTimesPressed = 0;
+
         // Generate random rhythm indexes, making sure that neither are the same.
-        _octRhythms[0] = (byte)Rnd.Range(0, HexOSStrings.OctNotes.Length);
-        do _octRhythms[1] = (byte)Rnd.Range(0, HexOSStrings.OctNotes.Length);
+        _octRhythms[0] = (byte)_rnd.Next(0, HexOSStrings.OctNotes.Length);
+        do _octRhythms[1] = (byte)_rnd.Next(0, HexOSStrings.OctNotes.Length);
         while (_octRhythms[1] == _octRhythms[0]);
 
         // Converts sum from decimal to base 4.
@@ -1051,15 +1139,15 @@ public class HexOS : MonoBehaviour
         Debug.LogFormat("[hexOS #{0}]: The 4-bit sum is {1}.", _moduleId, sum);
 
         // Generate random key from a piece of a phrase.
-        string key = HexOSStrings.OctPhrases[Rnd.Range(0, HexOSStrings.OctPhrases.Length)];
-        key = key.Remove(0, Rnd.Range(0, key.Length - 6));
+        string key = HexOSStrings.OctPhrases[_rnd.Next(0, HexOSStrings.OctPhrases.Length)];
+        key = key.Remove(0, _rnd.Next(0, key.Length - 6));
 
         while (key.Length > 6)
             key = key.Substring(0, key.Length - 1);
 
         // Generate random symbols.
         for (byte i = 0; i < _octSymbols.Length; i++)
-            _octSymbols[i] = (byte)Rnd.Range(0, 12);
+            _octSymbols[i] = (byte)_rnd.Next(0, 12);
 
         char[] encipheredKey = key.ToCharArray();
         decipher = key.ToCharArray();
@@ -1077,6 +1165,8 @@ public class HexOS : MonoBehaviour
 
             encipheredKey[i] = HexOSStrings.Alphabet[(index - HexOSStrings.Symbols[_octSymbols[i * 3]] - HexOSStrings.Symbols[_octSymbols[(i * 3) + 1]] - HexOSStrings.Symbols[_octSymbols[(i * 3) + 2]] + 27) % 27];
         }
+
+        _octColors.Clear();
 
         // Enciphers each letter into colors.
         for (byte i = 0; i < encipheredKey.Length; i++)
@@ -1482,11 +1572,11 @@ public class HexOS : MonoBehaviour
         for (byte i = 0; i < array.GetLength(0); i++)
             for (byte j = 0; j < array.GetLength(1); j++)
             {
-                byte rnd = (byte)Rnd.Range(0, array.GetLength(1));
+                byte value = (byte)Rnd.Range(0, array.GetLength(1));
 
                 T temp = array[i, j];
-                array[i, j] = array[i, rnd];
-                array[i, rnd] = temp;
+                array[i, j] = array[i, value];
+                array[i, value] = temp;
             }
     }
     #endregion
@@ -1503,7 +1593,7 @@ public class HexOS : MonoBehaviour
     }
 
 #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"!{0} play (Plays the sequence provided by the module.) - !{0} submit <###> (Submits the number by holding the button at those specific times. | Valid numbers range from 0-999 | Example: !{0} submit 420)";
+    private readonly string TwitchHelpMessage = @"!{0} play (Plays the sequence provided by the module.) - !{0} submit <###> (Submits the number by holding the button at those specific times. | Valid numbers range from 0-999 | Example: !{0} submit 420) - !{0} mash (Mashes the screen, in octOS it is used for regenerating the module in case of a bug)";
 #pragma warning restore 414
 
     /// <summary>
@@ -1537,6 +1627,35 @@ public class HexOS : MonoBehaviour
         }
 
         // If command is formatted correctly.
+        if (Regex.IsMatch(user[0], @"^\s*mash\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        {
+            yield return null;
+
+            // Is animating
+            if (_octAnimating)
+                yield return "sendtochaterror The module is currently unable to be interacted with!";
+
+            // Sequence is already playing.
+            else if (_playSequence)
+                yield return "sendtochaterror The sequence is already being played! Wait until the sequence is over!";
+
+            // This command is valid, play sequence.
+            else
+            {
+                Button.OnInteract();
+                Button.OnInteractEnded();
+
+                while (_octOS && _playSequence)
+                {
+                    Button.OnInteract();
+                    yield return new WaitForEndOfFrame();
+                    Button.OnInteractEnded();
+                    yield return new WaitForEndOfFrame();
+                }
+            }
+        }
+
+        // If command is formatted correctly.
         else if (Regex.IsMatch(user[0], @"^\s*submit\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
         {
             yield return null;
@@ -1563,9 +1682,15 @@ public class HexOS : MonoBehaviour
                 // Add leading 0's.
                 while (user[1].Length < 3)
                     user[1] = "0" + user[1];
-
+                 
                 // Will quickly determine if the module is about to solve or strike.
-                if ((!_octOS && user[1] == _answer) || (_octOS && user[1] == _octAnswer))
+                if (_octOS && user[1] == _octAnswer)
+                {
+                    yield return "awardpointsonsolve 24";
+                    yield return "solve";
+                }
+
+                else if (!_octOS && user[1] == _answer)
                     yield return "solve";
 
                 else if (user[1] == "888" && !_hasPlayedSequence && !_octOS && _canBeOctOS)
@@ -1589,9 +1714,6 @@ public class HexOS : MonoBehaviour
                     // Release button.
                     Button.OnInteractEnded();
                 }
-
-                if (_octOS && user[1] == _octAnswer)
-                    yield return "awardpoints 24";
             }
         }
     }

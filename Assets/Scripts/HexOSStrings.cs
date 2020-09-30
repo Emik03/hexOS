@@ -3,6 +3,8 @@ using UnityEngine;
 
 sealed class HexOSStrings
 {
+    public const string Version = "121";
+
     #region Color32
     public static readonly Color32[] PerfectColors = new Color32[3]
     {
