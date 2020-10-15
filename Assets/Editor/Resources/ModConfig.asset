@@ -18,6 +18,6 @@ MonoBehaviour:
     I am ready to go home.\"\n\nInspired by Hexyl, an original character by Spartan.
     https://steamcommunity.com/id/spartan_SM\n\nmoduleId: hexOS\n\nHTML Manual: https://ktane.timwi.de/HTML/hexOS.html\n\nTwitch
     Plays is supported.\r\n\r\nIs there a bug? Do you have a question? Discord: @Emik#0001"
-  version: 1.2.1
+  version: 1.2.2
   outputFolder: D:\Steam\steamapps\common\Keep Talking and Nobody Explodes\mods
   previewImage: {fileID: 2800000, guid: 62ad158c332913e4dac5581e905ce5c0, type: 3}

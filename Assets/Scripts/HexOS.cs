@@ -475,7 +475,17 @@ public class HexOS : MonoBehaviour
     private IEnumerator OctStrike()
     {
         _octAnimating = true;
+        _playSequence = false;
         yield return new WaitForEndOfFrame();
+
+        // Turn back to black.
+        for (byte i = 0; i < Ciphers.Length; i++)
+        {
+            Ciphers[i].material.mainTexture = null;
+            Ciphers[i].material.color = Color.white;
+            Ciphers[i].material.color = new Color32(0, 0, 0, 255);
+            Ciphers[i].transform.localPosition = new Vector3(Ciphers[i].transform.localPosition.x, -2.1f, Ciphers[i].transform.localPosition.z);
+        }
 
         // Resets all strings.
         UserNumber.text = "";
