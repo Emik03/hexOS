@@ -24,6 +24,7 @@ public class HexOS : MonoBehaviour
     public KMBombModule Module;
     public KMModSettings ModSettings;
     public KMSelectable Button;
+    public Renderer Bezel;
     public MeshRenderer[] Ciphers, Cylinders;
     public Renderer Background, Foreground, VideoRenderer;
     public TextMesh Number, UserNumber, Status, Quote, ModelName, GroupCounter;
@@ -38,6 +39,7 @@ public class HexOS : MonoBehaviour
     char[] decipher = new char[2];
     string sum = "", screen = "";
 
+    private Color32 _hexBezel = new Color32(127, 100, 92, 255), _octBezel = new Color32(42, 33, 30, 255);
     private System.Random _rnd;
     private static bool _forceAltSolve, _experimentalShake, _canBeOctOS;
     private bool _lightsOn, _octOS, _isHolding, _playSequence, _hasPlayedSequence, _octAnimating, _fastStrike;
@@ -329,15 +331,6 @@ public class HexOS : MonoBehaviour
                 // If the user activates hard mode.
                 else if (_user == "888" && !_hasPlayedSequence && !_octOS && _canBeOctOS)
                 {
-                    Status.text = "Boot Manager\n...?";
-                    Audio.PlaySoundAtTransform("octActivate", Module.transform);
-                    
-                    _octOS = true;
-                    _user = "";
-
-                    Background.material.SetColor("_Color", HexOSStrings.TransparentColors[0]);
-                    Foreground.material.SetColor("_Color", Color.red);
-
                     // Generate new answer.
                     _octAnswer = OctGenerate();
                     Debug.LogFormat("[hexOS #{0}]: The expected answer for the current octOS is {1}.", _moduleId, _octAnswer);
@@ -549,7 +542,9 @@ public class HexOS : MonoBehaviour
 
         // Reset back to hexOS, restoring all the values.
         _octOS = false;
+        Bezel.material.color = _hexBezel;
         ModelName.text = "hexOS";
+        ModelName.color = new Color32(0, 0, 0, 255);
         screen = _tempScreen;
         sum = _tempSum;
         UserNumber.text = "---";
@@ -610,7 +605,9 @@ public class HexOS : MonoBehaviour
 
         // Reset back to hexOS, restoring all the values.
         _octOS = false;
+        Bezel.material.color = _hexBezel;
         ModelName.text = "hexOS";
+        ModelName.color = new Color32(0, 0, 0, 255);
         screen = _tempScreen;
         sum = _tempSum;
         UserNumber.text = "---";
@@ -1126,7 +1123,18 @@ public class HexOS : MonoBehaviour
     private string OctGenerate()
     {
         Debug.LogFormat("[hexOS #{0}]: octOS has been activated! Regenerating module...", _moduleId);
+        Bezel.material.color = _octBezel;
         ModelName.text = "octOS";
+        ModelName.color = new Color32(222, 222, 222, 255);
+
+        Status.text = "Boot Manager\n...?";
+        Audio.PlaySoundAtTransform("octActivate", Module.transform);
+
+        _octOS = true;
+        _user = "";
+
+        Background.material.SetColor("_Color", HexOSStrings.TransparentColors[0]);
+        Foreground.material.SetColor("_Color", Color.red);
 
         _amountOfTimesPressed = 0;
 
@@ -1599,7 +1607,7 @@ public class HexOS : MonoBehaviour
     private bool IsValid(string par)
     {
         ushort s;
-        return ushort.TryParse(par, out s) && s < 1000;
+        return ushort.TryParse(par, out s) && s < 1000 && par.Length <= 3;
     }
 
 #pragma warning disable 414

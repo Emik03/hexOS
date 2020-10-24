@@ -152,23 +152,51 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
-    - target: {fileID: 114644997712016008, guid: 320154cebbcf50a4d9112e797c090b39,
-        type: 2}
-      propertyPath: Settings
-      value: '{   "disableOctOS": false,   "HowToUse0": "Enable/disable the ability
-        to go into hard mode by submitting a number without playing the sequence.
-        (default: false)",    "fastStrike": true,   "HowToUse1": "Exclusive to OctOS,
-        shortens the strike animation to be 15 seconds instead of 57.5 seconds. (default:
-        false)",    "experimentalShake": false,   "HowToUse2": "Have the module shake
-        upon every played beat, don''t use this on serious bombs. :) (default: false)",    "forceAltSolve":
-        false,   "HowToUse3": "Force the module to play the alternative solve sequence
-        regardless of Forget The Colors'' existence. (default: false)",    "flashOtherColors":
-        5,   "HowToUse4": "Alter the amount of times other colors flash. Cannot exceed
-        6. (default: 5)",    "delayPerBeat": 0.07,   "HowToUse5": "Alter the delay
-        between each beat played. Cannot exceed 1. (default: 0.07)",    "customSolveQuote":
-        "",   "HowToUse6": "Change the display on the module when it is solved. If
-        left blank, it will pull its default quotes. (default: literally nothing)"
-        }'
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 320154cebbcf50a4d9112e797c090b39, type: 2}
+  m_IsPrefabParent: 0
+--- !u!1001 &694950609
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4987683634183824, guid: 320154cebbcf50a4d9112e797c090b39, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4987683634183824, guid: 320154cebbcf50a4d9112e797c090b39, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0.0053
+      objectReference: {fileID: 0}
+    - target: {fileID: 4987683634183824, guid: 320154cebbcf50a4d9112e797c090b39, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4987683634183824, guid: 320154cebbcf50a4d9112e797c090b39, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4987683634183824, guid: 320154cebbcf50a4d9112e797c090b39, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4987683634183824, guid: 320154cebbcf50a4d9112e797c090b39, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4987683634183824, guid: 320154cebbcf50a4d9112e797c090b39, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4987683634183824, guid: 320154cebbcf50a4d9112e797c090b39, type: 2}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1551774311257762, guid: 320154cebbcf50a4d9112e797c090b39, type: 2}
+      propertyPath: m_Name
+      value: hexOS (1)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 320154cebbcf50a4d9112e797c090b39, type: 2}

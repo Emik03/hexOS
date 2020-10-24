@@ -4379,8 +4379,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Settings: '{   "disableOctOS": false,   "HowToUse0": "Enable/disable the ability
     to go into hard mode by submitting a number without playing the sequence. (default:
-    false)",    "fastStrike": false,   "HowToUse1": "Exclusive to OctOS, shortens
-    the strike animation to be 15 seconds instead of 57.5 seconds. (default: false)",    "experimentalShake":
+    false)",    "fastStrike": true,   "HowToUse1": "Exclusive to OctOS, shortens the
+    strike animation to be 15 seconds instead of 57.5 seconds. (default: false)",    "experimentalShake":
     false,   "HowToUse2": "Have the module shake upon every played beat, don''t use
     this on serious bombs. :) (default: false)",    "forceAltSolve": false,   "HowToUse3":
     "Force the module to play the alternative solve sequence regardless of Forget
@@ -4420,6 +4420,7 @@ MonoBehaviour:
   Module: {fileID: 114689504493991274}
   ModSettings: {fileID: 114644997712016008}
   Button: {fileID: 114538943586089446}
+  Bezel: {fileID: 23757370132951406}
   Ciphers:
   - {fileID: 23028725571723050}
   - {fileID: 23600355140497642}
