@@ -114,9 +114,9 @@ public class HexOS : MonoBehaviour
         for (byte i = 0; i < Ciphers.Length; i++)
             Ciphers[i].transform.localPosition = new Vector3(Ciphers[i].transform.localPosition.x, -2.1f, Ciphers[i].transform.localPosition.z);
 
-        // Hide toilet if neither forget the colors or force alt solve is on, otherwise hide stars.
-        _rotationSpeed = (byte)((Convert.ToByte(_forceAltSolve || Info.GetSolvableModuleNames().Contains("Forget The Colors")) * 9) + 1);
-        byte hideIndex = (byte)(1 - Convert.ToByte(_forceAltSolve || Info.GetSolvableModuleNames().Contains("Forget The Colors")));
+        // Hide toilet if force alt solve is on, otherwise hide stars.
+        _rotationSpeed = (byte)((Convert.ToByte(_forceAltSolve) * 9) + 1);
+        byte hideIndex = (byte)(1 - Convert.ToByte(_forceAltSolve));
         for (byte i = (byte)(2 * hideIndex); i < 2 + hideIndex; i++)
             Spinnables[i].transform.localPosition = new Vector3(Spinnables[i].transform.localPosition.x, Spinnables[i].transform.localPosition.y / 3, Spinnables[i].transform.localPosition.z / 2);
 
@@ -191,9 +191,6 @@ public class HexOS : MonoBehaviour
             _isHolding = false;
             _held = -1;
         }
-
-        if (_octOS && _amountOfTimesPressed > 18 && !_octAnimating && !_playSequence)
-            StartCoroutine(OctRegenerate());
     }
 
     /// <summary>
@@ -231,7 +228,7 @@ public class HexOS : MonoBehaviour
         Audio.PlaySoundAtTransform("click", Module.transform);
         Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Module.transform);
 
-        Button.AddInteractionPunch(3);
+        Button.AddInteractionPunch(2.5f);
 
         _amountOfTimesPressed++;
 
@@ -376,16 +373,14 @@ public class HexOS : MonoBehaviour
         // Typical module handle pass.
         Background.material.SetColor("_Color", HexOSStrings.TransparentColors[1]);
         Foreground.material.SetColor("_Color", Color.green);
-        Button.AddInteractionPunch(20);
+        Button.AddInteractionPunch(50);
         isSolved = true;
         Status.text = "Boot Manager\nUnlocked!";
         Debug.LogFormat("[hexOS #{0}]: The correct number was submitted, module solved!", _moduleId);
         Module.HandlePass();
 
-        Button.AddInteractionPunch(15);
-
-        // If forget the colors exists, or it's forced to, pick a meme message.
-        if (_forceAltSolve || Info.GetSolvableModuleNames().Contains("Forget The Colors"))
+        // If forceAltSolve is enabled, pick a joke message.
+        if (_forceAltSolve)
         {
             Audio.PlaySoundAtTransform("solveAlt", Module.transform);
             Quote.text = HexOSStrings.AltSolvePhrases[Rnd.Range(0, HexOSStrings.AltSolvePhrases.Length)];
@@ -406,7 +401,7 @@ public class HexOS : MonoBehaviour
         for (byte i = 0; i < 20; i++)
         {
             Number.text = Rnd.Range(100, 1000).ToString();
-            yield return new WaitForSeconds(0.05f);
+            yield return new WaitForSecondsRealtime(0.05f);
         }
 
         // Stops everything.
@@ -416,7 +411,7 @@ public class HexOS : MonoBehaviour
         for (byte i = 3; i > 2; i += 2)
         {
             Quote.color = new Color32(i, i, i, 255);
-            yield return new WaitForSeconds(0.02f);
+            yield return new WaitForSecondsRealtime(0.02f);
         }
 
         StopAllCoroutines();
@@ -441,7 +436,7 @@ public class HexOS : MonoBehaviour
         Status.text = "";
 
         // Gives powerful emphasis.
-        Button.AddInteractionPunch(50);
+        Button.AddInteractionPunch(100);
 
         // Plays the solve animation.
         VideoOct.transform.localPosition = new Vector3(0, 0.84f, 0);
@@ -453,9 +448,9 @@ public class HexOS : MonoBehaviour
         Audio.PlaySoundAtTransform("octSolve", Module.transform);
 
         // The exact amount of seconds for the audio clip to go quiet is 10.122 seconds.
-        yield return new WaitForSeconds(10.122f);
+        yield return new WaitForSecondsRealtime(10.122f);
 
-        Debug.LogFormat("[hexOS #{0}]: The correct number for octOS was submitted, module solved! +24 additional points!", _moduleId);
+        Debug.LogFormat("[hexOS #{0}]: The correct number for octOS was submitted, module solved! +36 additional points!", _moduleId);
         isSolved = true;
         Module.HandlePass();
 
@@ -507,14 +502,14 @@ public class HexOS : MonoBehaviour
             {
                 c -= 20;
                 VideoRenderer.material.color = new Color32(255, 255, 255, c);
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSecondsRealtime(0.1f);
             }
 
             while (c != 252)
             {
                 c += 4;
                 VideoRenderer.material.color = new Color32(255, 255, 255, c);
-                yield return new WaitForSeconds(1.484375f);
+                yield return new WaitForSecondsRealtime(1.484375f);
             }
 
             yield return new WaitWhile(() => VideoOct.isPlaying);
@@ -533,7 +528,7 @@ public class HexOS : MonoBehaviour
             {
                 c++;
                 VideoRenderer.material.color = new Color32(255, 255, 255, c);
-                yield return new WaitForSeconds(0.04f);
+                yield return new WaitForSecondsRealtime(0.04f);
             }
             yield return new WaitWhile(() => VideoOct.isPlaying);
         }
@@ -565,77 +560,6 @@ public class HexOS : MonoBehaviour
     }
 
     /// <summary>
-    /// Strikes the module in an animation for hard mode.
-    /// </summary>
-    private IEnumerator OctRegenerate()
-    {
-        _octAnimating = true;
-        yield return new WaitForEndOfFrame();
-
-        _amountOfTimesPressed = 0;
-
-        // Resets all strings.
-        UserNumber.text = "";
-        Number.text = "";
-        Status.text = "";
-
-        // Sets the background and foreground to be white in case if the video animation is slightly delayed.
-        Background.material.SetColor("_Color", HexOSStrings.TransparentColors[3]);
-        Foreground.material.SetColor("_Color", Color.white);
-
-        VideoOct.transform.localPosition = new Vector3(0, 0.84f, 0);
-        VideoRenderer.material.color = new Color32(255, 255, 255, 0);
-
-        VideoOct.clip = Application.isEditor ? Clips[3] : VideoLoader.clips[3];
-        VideoOct.Prepare();
-        VideoOct.Play();
-        Audio.PlaySoundAtTransform("octStrikeFast", Module.transform);
-        
-        // For reference, the audio clip is 11.85 seconds.
-        byte c = 0;
-        while (c != 255)
-        {
-            c++;
-            VideoRenderer.material.color = new Color32(255, 255, 255, c);
-            yield return new WaitForSeconds(0.04f);
-        }
-        yield return new WaitWhile(() => VideoOct.isPlaying);
-
-        VideoOct.transform.localPosition = new Vector3(0, -0.42f, 0);
-
-        // Reset back to hexOS, restoring all the values.
-        _octOS = false;
-        Bezel.material.color = _hexBezel;
-        ModelName.text = "hexOS";
-        ModelName.color = new Color32(0, 0, 0, 255);
-        screen = _tempScreen;
-        sum = _tempSum;
-        UserNumber.text = "---";
-        Status.text = "Boot Manager\nWaiting...";
-
-        decipher = new char[2];
-        for (int i = 0; i < decipher.Length; i++)
-            _tempDecipher[i] = decipher[i];
-
-        Background.material.SetColor("_Color", HexOSStrings.TransparentColors[2]);
-        Foreground.material.SetColor("_Color", Color.blue);
-
-        Status.text = "Boot Manager\n...?";
-
-        _octOS = true;
-        _user = "";
-
-        Background.material.SetColor("_Color", HexOSStrings.TransparentColors[0]);
-        Foreground.material.SetColor("_Color", Color.red);
-
-        // Start it up again.
-        Debug.LogFormat("[hexOS #{0}]: octOS is being refreshed!", _moduleId);
-        _octAnimating = false;
-        OctGenerate();
-        Audio.PlaySoundAtTransform("octActivate", Module.transform);
-    }
-
-    /// <summary>
     /// Updates the screen every second to cycle all digits.
     /// </summary>
     private IEnumerator UpdateScreen()
@@ -661,7 +585,7 @@ public class HexOS : MonoBehaviour
                 Number.text = screen[index++].ToString() + screen[index++].ToString() + screen[index++].ToString();
 
             // Display lag.
-            yield return new WaitForSeconds(1f + (_hexOSStrikes / 20) - (Convert.ToSingle(_octOS) / 1.5f));
+            yield return new WaitForSecondsRealtime(1f + (_hexOSStrikes / 20) - (Convert.ToSingle(_octOS) / 1.5f));
         }
     }
 
@@ -719,10 +643,10 @@ public class HexOS : MonoBehaviour
                 {
                     Audio.PlaySoundAtTransform("chord" + (_press + 1), Module.transform);
                     if (_experimentalShake)
-                        Button.AddInteractionPunch();
+                        Button.AddInteractionPunch(0.5f);
                 }
 
-                yield return new WaitForSeconds(delay);
+                yield return new WaitForSecondsRealtime(delay);
             }
 
         // If false, this returns a coroutine based on a linear search which makes delays more accurate.
@@ -733,7 +657,7 @@ public class HexOS : MonoBehaviour
                 // Play note.
                 Audio.PlaySoundAtTransform("chord" + (_press + 1), Module.transform);
                 if (_experimentalShake)
-                    Button.AddInteractionPunch();
+                    Button.AddInteractionPunch(0.5f);
 
                 // Temporarily store the variable 'i'.
                 byte temp = i;
@@ -743,14 +667,14 @@ public class HexOS : MonoBehaviour
                     if (HexOSStrings.Notes[_rhythms[_press % 2]][i] == 'X')
                         break;
 
-                yield return new WaitForSeconds((i - temp) * delay);
+                yield return new WaitForSecondsRealtime((i - temp) * delay);
             }
 
         // Play one last note, with emphasis on percussion.
         Audio.PlaySoundAtTransform("chord" + (_press + 1), Module.transform);
         Audio.PlaySoundAtTransform("clap", Module.transform);
         if (_experimentalShake)
-            Button.AddInteractionPunch(10);
+            Button.AddInteractionPunch(5);
 
         if (Status.text != "Boot Manager\nStoring " + _submit + "...")
             Status.text = "Boot Manager\nLoading...";
@@ -762,7 +686,7 @@ public class HexOS : MonoBehaviour
             Ciphers[j].transform.localPosition = new Vector3(Ciphers[j].transform.localPosition.x, -2.1f, Ciphers[j].transform.localPosition.z);
         }
 
-        yield return new WaitForSeconds(Math.Min((_delayPerBeat * 12) + (_hexOSStrikes / 20), 1));
+        yield return new WaitForSecondsRealtime(Math.Min((_delayPerBeat * 12) + (_hexOSStrikes / 20), 1));
 
         if (Status.text != "Boot Manager\nStoring " + _submit + "...")
             Status.text = "Boot Manager\nWaiting...";
@@ -815,7 +739,7 @@ public class HexOS : MonoBehaviour
 
             Audio.PlaySoundAtTransform("chord" + (_press + 9), Module.transform);
             if (_experimentalShake)
-                Button.AddInteractionPunch();
+                Button.AddInteractionPunch(.5f);
 
             // Temporarily store the variable 'i'.
             byte temp = i;
@@ -826,14 +750,14 @@ public class HexOS : MonoBehaviour
                     break;
 
             // 60 / 1140 (190bpm * 6beat)
-            yield return new WaitForSeconds((i - temp) * 0.0526315789474f);
+            yield return new WaitForSecondsRealtime((i - temp) * 0.0526315789474f);
         }
 
         // Play one last note, with emphasis on percussion.
         Audio.PlaySoundAtTransform("chord" + (_press + 9), Module.transform);
         Audio.PlaySoundAtTransform("clap", Module.transform);
         if (_experimentalShake)
-            Button.AddInteractionPunch(10);
+            Button.AddInteractionPunch(5);
 
         if (Status.text != "Boot Manager\nStoring " + _submit + "...")
             Status.text = "Boot Manager\nLoading...";
@@ -846,7 +770,7 @@ public class HexOS : MonoBehaviour
         }   
 
         // (60 / 1140) * 12 (190bpm * 6beat * 12beat)
-        //yield return new WaitForSeconds(0.63157894736f);
+        //yield return new WaitForSecondsRealtime(0.63157894736f);
 
         if (Status.text != "Boot Manager\nStoring " + _submit + "...")
             Status.text = "Boot Manager\nWaiting...";
@@ -870,7 +794,7 @@ public class HexOS : MonoBehaviour
             for (byte j = 0; j < Ciphers.Length; j++)
                 Ciphers[j].material.color = HexOSStrings.PerfectColors[seqs[j, i / 2]];
 
-            yield return new WaitForSeconds(Math.Min(_delayPerBeat + (_hexOSStrikes / 20), 1) * 2);
+            yield return new WaitForSecondsRealtime(Math.Min(_delayPerBeat + (_hexOSStrikes / 20), 1) * 2);
         }
     }
 
@@ -901,7 +825,7 @@ public class HexOS : MonoBehaviour
                 Ciphers[j].material.mainTexture = FrequencyTextures[seqs[j + (i / 17 * 3) + (_press % 2 * 9), i % 17 / 2] + _octSymbols[j + (i / 17 * 3) + (_press % 2 * 9)]];
 
             // 60 / 1140 (190bpm * 6beat)
-            yield return new WaitForSeconds(delay);
+            yield return new WaitForSecondsRealtime(delay);
         }
 
         GroupCounter.text = "";
@@ -1704,7 +1628,7 @@ public class HexOS : MonoBehaviour
                 // Will quickly determine if the module is about to solve or strike.
                 if (_octOS && user[1] == _octAnswer)
                 {
-                    yield return "awardpointsonsolve 24";
+                    yield return "awardpointsonsolve 36";
                     yield return "solve";
                 }
 
